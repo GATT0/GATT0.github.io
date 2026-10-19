@@ -1,0 +1,238 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1160" role="img" aria-labelledby="title desc">
+  <title id="title">Allocation and free operations on an in-object freelist</title>
+  <desc id="desc">A 0x400 cache divides one physical page into four objects. Teal arrows leave the next-pointer field stored in the first eight bytes of every free object. A short yellow arrow connects the page free-list pointer directly to its head.</desc>
+  <defs>
+    <marker id="nextArrowHead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2dd4bf"/>
+    </marker>
+    <marker id="headArrowHead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#fbbf24"/>
+    </marker>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:21px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:17px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:15px;fill:#cbd5e1}
+      .tiny{font-family:monospace;font-size:12px;fill:#cbd5e1}
+      .pointerText{font-family:monospace;font-size:14px;font-weight:700;fill:#f8fafc}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2}
+      .physical{fill:#064e3b;stroke:#34d399;stroke-width:2}
+      .allocated{fill:#9a3412;stroke:#fb923c;stroke-width:1.5}
+      .free{fill:#0f766e;stroke:#2dd4bf;stroke-width:1.5}
+      .pointerBytes{fill:#115e59;stroke:none}
+      .pointerBytesNew{fill:#713f12;stroke:none}
+      .divider{stroke:#2dd4bf;stroke-width:1.5}
+      .dividerNew{stroke:#fbbf24;stroke-width:1.5}
+      .freeListBox{fill:#1e293b;stroke:#fbbf24;stroke-width:2}
+      .nullBox{fill:#1e293b;stroke:#64748b;stroke-width:2}
+      .nextArrow{stroke:#2dd4bf;stroke-width:3;fill:none}
+      .headArrow{stroke:#fbbf24;stroke-width:3;fill:none}
+    </style>
+  </defs>
+
+  <rect width="1500" height="1160" rx="18" fill="#0f172a"/>
+  <text x="750" y="48" text-anchor="middle" class="title">In-object freelist</text>
+
+  <!-- Current state: free_list -> object 2 -> object 1 -> object 3 -> NULL. -->
+  <rect x="45" y="78" width="1410" height="332" rx="14" class="panel"/>
+  <text x="75" y="114" class="heading">CURRENT STATE</text>
+
+  <rect x="721" y="128" width="170" height="40" rx="8" class="freeListBox"/>
+  <text x="806" y="154" text-anchor="middle" class="label">free_list</text>
+
+  <rect x="225" y="180" width="1050" height="155" rx="10" class="physical"/>
+  <text x="250" y="208" class="label">physical page · cache 0x400</text>
+
+  <g transform="translate(250 225)">
+    <rect width="235" height="88" class="allocated"/>
+    <text x="117.5" y="39" text-anchor="middle" class="label">object 0</text>
+    <text x="117.5" y="64" text-anchor="middle" class="tiny">user data</text>
+  </g>
+  <g transform="translate(505 225)">
+    <rect width="235" height="88" class="free"/>
+    <rect x="1.5" y="1.5" width="91" height="85" class="pointerBytes"/>
+    <line x1="93" y1="1" x2="93" y2="87" class="divider"/>
+    <text x="46" y="22" text-anchor="middle" class="tiny">next ptr</text>
+    <text x="46" y="41" text-anchor="middle" class="tiny">first 8 B</text>
+    <text x="46" y="65" text-anchor="middle" class="pointerText">&amp;obj 3</text>
+    <text x="164" y="39" text-anchor="middle" class="label">object 1</text>
+    <text x="164" y="64" text-anchor="middle" class="tiny">free bytes</text>
+  </g>
+  <g transform="translate(760 225)">
+    <rect width="235" height="88" class="free"/>
+    <rect x="1.5" y="1.5" width="91" height="85" class="pointerBytes"/>
+    <line x1="93" y1="1" x2="93" y2="87" class="divider"/>
+    <text x="46" y="22" text-anchor="middle" class="tiny">next ptr</text>
+    <text x="46" y="41" text-anchor="middle" class="tiny">first 8 B</text>
+    <text x="46" y="65" text-anchor="middle" class="pointerText">&amp;obj 1</text>
+    <text x="164" y="39" text-anchor="middle" class="label">object 2</text>
+    <text x="164" y="64" text-anchor="middle" class="tiny">free bytes</text>
+  </g>
+  <g transform="translate(1015 225)">
+    <rect width="235" height="88" class="free"/>
+    <rect x="1.5" y="1.5" width="91" height="85" class="pointerBytes"/>
+    <line x1="93" y1="1" x2="93" y2="87" class="divider"/>
+    <text x="46" y="22" text-anchor="middle" class="tiny">next ptr</text>
+    <text x="46" y="41" text-anchor="middle" class="tiny">first 8 B</text>
+    <text x="46" y="65" text-anchor="middle" class="pointerText">NULL</text>
+    <text x="164" y="39" text-anchor="middle" class="label">object 3</text>
+    <text x="164" y="64" text-anchor="middle" class="tiny">free bytes</text>
+  </g>
+
+  <!-- Each arrow starts at the next field stored inside its source object. -->
+  <rect x="804.5" y="168" width="3" height="56" fill="#fbbf24"/>
+  <polygon points="806,224 799,212 813,212" fill="#fbbf24"/>
+  <circle cx="806" cy="313" r="4" fill="#2dd4bf"/>
+  <rect x="804.5" y="313" width="3" height="37" fill="#2dd4bf"/>
+  <rect x="493" y="348.5" width="313" height="3" fill="#2dd4bf"/>
+  <rect x="491.5" y="269" width="3" height="81" fill="#2dd4bf"/>
+  <rect x="493" y="267.5" width="11" height="3" fill="#2dd4bf"/>
+  <polygon points="504,269 493,263 493,275" fill="#2dd4bf"/>
+  <circle cx="551" cy="313" r="4" fill="#2dd4bf"/>
+  <rect x="549.5" y="313" width="3" height="56" fill="#2dd4bf"/>
+  <rect x="551" y="367.5" width="452" height="3" fill="#2dd4bf"/>
+  <rect x="1001.5" y="269" width="3" height="100" fill="#2dd4bf"/>
+  <rect x="1003" y="267.5" width="11" height="3" fill="#2dd4bf"/>
+  <polygon points="1014,269 1003,263 1003,275" fill="#2dd4bf"/>
+  <circle cx="1061" cy="313" r="4" fill="#2dd4bf"/>
+  <rect x="1059.5" y="313" width="3" height="76" fill="#2dd4bf"/>
+  <rect x="1061" y="387.5" width="239" height="3" fill="#2dd4bf"/>
+  <polygon points="1300,389 1289,383 1289,395" fill="#2dd4bf"/>
+  <rect x="1315" y="369" width="105" height="40" rx="8" class="nullBox"/>
+  <text x="1367.5" y="395" text-anchor="middle" class="label">NULL</text>
+
+  <!-- Allocation pops object 2; object 1 becomes the head. -->
+  <rect x="45" y="425" width="1410" height="332" rx="14" class="panel"/>
+  <text x="75" y="461" class="heading">ALLOCATE → RETURN OBJECT 2</text>
+
+  <rect x="466" y="475" width="170" height="40" rx="8" class="freeListBox"/>
+  <text x="551" y="501" text-anchor="middle" class="label">free_list</text>
+
+  <rect x="225" y="527" width="1050" height="155" rx="10" class="physical"/>
+  <text x="250" y="555" class="label">physical page · cache 0x400</text>
+
+  <g transform="translate(250 572)">
+    <rect width="235" height="88" class="allocated"/>
+    <text x="117.5" y="39" text-anchor="middle" class="label">object 0</text>
+    <text x="117.5" y="64" text-anchor="middle" class="tiny">user data</text>
+  </g>
+  <g transform="translate(505 572)">
+    <rect width="235" height="88" class="free"/>
+    <rect x="1.5" y="1.5" width="91" height="85" class="pointerBytes"/>
+    <line x1="93" y1="1" x2="93" y2="87" class="divider"/>
+    <text x="46" y="22" text-anchor="middle" class="tiny">next ptr</text>
+    <text x="46" y="41" text-anchor="middle" class="tiny">first 8 B</text>
+    <text x="46" y="65" text-anchor="middle" class="pointerText">&amp;obj 3</text>
+    <text x="164" y="39" text-anchor="middle" class="label">object 1</text>
+    <text x="164" y="64" text-anchor="middle" class="tiny">free bytes</text>
+  </g>
+  <g transform="translate(760 572)">
+    <rect width="235" height="88" class="allocated"/>
+    <text x="117.5" y="39" text-anchor="middle" class="label">object 2</text>
+    <text x="117.5" y="64" text-anchor="middle" class="tiny">returned to caller</text>
+  </g>
+  <g transform="translate(1015 572)">
+    <rect width="235" height="88" class="free"/>
+    <rect x="1.5" y="1.5" width="91" height="85" class="pointerBytes"/>
+    <line x1="93" y1="1" x2="93" y2="87" class="divider"/>
+    <text x="46" y="22" text-anchor="middle" class="tiny">next ptr</text>
+    <text x="46" y="41" text-anchor="middle" class="tiny">first 8 B</text>
+    <text x="46" y="65" text-anchor="middle" class="pointerText">NULL</text>
+    <text x="164" y="39" text-anchor="middle" class="label">object 3</text>
+    <text x="164" y="64" text-anchor="middle" class="tiny">free bytes</text>
+  </g>
+
+  <rect x="549.5" y="515" width="3" height="56" fill="#fbbf24"/>
+  <polygon points="551,571 544,559 558,559" fill="#fbbf24"/>
+  <circle cx="551" cy="660" r="4" fill="#2dd4bf"/>
+  <rect x="549.5" y="660" width="3" height="40" fill="#2dd4bf"/>
+  <rect x="551" y="698.5" width="452" height="3" fill="#2dd4bf"/>
+  <rect x="1001.5" y="616" width="3" height="84" fill="#2dd4bf"/>
+  <rect x="1003" y="614.5" width="11" height="3" fill="#2dd4bf"/>
+  <polygon points="1014,616 1003,610 1003,622" fill="#2dd4bf"/>
+  <circle cx="1061" cy="660" r="4" fill="#2dd4bf"/>
+  <rect x="1059.5" y="660" width="3" height="76" fill="#2dd4bf"/>
+  <rect x="1061" y="734.5" width="239" height="3" fill="#2dd4bf"/>
+  <polygon points="1300,736 1289,730 1289,742" fill="#2dd4bf"/>
+  <rect x="1315" y="716" width="105" height="40" rx="8" class="nullBox"/>
+  <text x="1367.5" y="742" text-anchor="middle" class="label">NULL</text>
+
+  <!-- Free writes the old head to object 2 and makes object 2 the new head. -->
+  <rect x="45" y="772" width="1410" height="332" rx="14" class="panel"/>
+  <text x="75" y="808" class="heading">FREE OBJECT 2 → WRITE OLD HEAD, THEN PUSH TO FRONT</text>
+
+  <rect x="721" y="822" width="170" height="40" rx="8" class="freeListBox"/>
+  <text x="806" y="848" text-anchor="middle" class="label">free_list</text>
+
+  <rect x="225" y="874" width="1050" height="155" rx="10" class="physical"/>
+  <text x="250" y="902" class="label">physical page · cache 0x400</text>
+
+  <g transform="translate(250 919)">
+    <rect width="235" height="88" class="allocated"/>
+    <text x="117.5" y="39" text-anchor="middle" class="label">object 0</text>
+    <text x="117.5" y="64" text-anchor="middle" class="tiny">user data</text>
+  </g>
+  <g transform="translate(505 919)">
+    <rect width="235" height="88" class="free"/>
+    <rect x="1.5" y="1.5" width="91" height="85" class="pointerBytes"/>
+    <line x1="93" y1="1" x2="93" y2="87" class="divider"/>
+    <text x="46" y="22" text-anchor="middle" class="tiny">next ptr</text>
+    <text x="46" y="41" text-anchor="middle" class="tiny">first 8 B</text>
+    <text x="46" y="65" text-anchor="middle" class="pointerText">&amp;obj 3</text>
+    <text x="164" y="39" text-anchor="middle" class="label">object 1</text>
+    <text x="164" y="64" text-anchor="middle" class="tiny">free bytes</text>
+  </g>
+  <g transform="translate(760 919)">
+    <rect width="235" height="88" class="free"/>
+    <rect x="1.5" y="1.5" width="91" height="85" class="pointerBytesNew"/>
+    <line x1="93" y1="1" x2="93" y2="87" class="dividerNew"/>
+    <text x="46" y="22" text-anchor="middle" class="tiny">next ptr</text>
+    <text x="46" y="41" text-anchor="middle" class="tiny">first 8 B</text>
+    <text x="46" y="65" text-anchor="middle" class="pointerText">&amp;obj 1</text>
+    <text x="164" y="39" text-anchor="middle" class="label">object 2</text>
+    <text x="164" y="64" text-anchor="middle" class="tiny">free bytes</text>
+  </g>
+  <g transform="translate(1015 919)">
+    <rect width="235" height="88" class="free"/>
+    <rect x="1.5" y="1.5" width="91" height="85" class="pointerBytes"/>
+    <line x1="93" y1="1" x2="93" y2="87" class="divider"/>
+    <text x="46" y="22" text-anchor="middle" class="tiny">next ptr</text>
+    <text x="46" y="41" text-anchor="middle" class="tiny">first 8 B</text>
+    <text x="46" y="65" text-anchor="middle" class="pointerText">NULL</text>
+    <text x="164" y="39" text-anchor="middle" class="label">object 3</text>
+    <text x="164" y="64" text-anchor="middle" class="tiny">free bytes</text>
+  </g>
+
+  <rect x="804.5" y="862" width="3" height="56" fill="#fbbf24"/>
+  <polygon points="806,918 799,906 813,906" fill="#fbbf24"/>
+  <circle cx="806" cy="1007" r="4" fill="#2dd4bf"/>
+  <rect x="804.5" y="1007" width="3" height="37" fill="#2dd4bf"/>
+  <rect x="493" y="1042.5" width="313" height="3" fill="#2dd4bf"/>
+  <rect x="491.5" y="963" width="3" height="81" fill="#2dd4bf"/>
+  <rect x="493" y="961.5" width="11" height="3" fill="#2dd4bf"/>
+  <polygon points="504,963 493,957 493,969" fill="#2dd4bf"/>
+  <circle cx="551" cy="1007" r="4" fill="#2dd4bf"/>
+  <rect x="549.5" y="1007" width="3" height="56" fill="#2dd4bf"/>
+  <rect x="551" y="1061.5" width="452" height="3" fill="#2dd4bf"/>
+  <rect x="1001.5" y="963" width="3" height="100" fill="#2dd4bf"/>
+  <rect x="1003" y="961.5" width="11" height="3" fill="#2dd4bf"/>
+  <polygon points="1014,963 1003,957 1003,969" fill="#2dd4bf"/>
+  <circle cx="1061" cy="1007" r="4" fill="#2dd4bf"/>
+  <rect x="1059.5" y="1007" width="3" height="76" fill="#2dd4bf"/>
+  <rect x="1061" y="1081.5" width="239" height="3" fill="#2dd4bf"/>
+  <polygon points="1300,1083 1289,1077 1289,1089" fill="#2dd4bf"/>
+  <rect x="1315" y="1063" width="105" height="40" rx="8" class="nullBox"/>
+  <text x="1367.5" y="1089" text-anchor="middle" class="label">NULL</text>
+
+  <!-- Legend -->
+  <rect x="245" y="1124" width="22" height="22" class="allocated"/>
+  <text x="280" y="1141" class="small">allocated object</text>
+  <rect x="510" y="1124" width="22" height="22" class="free"/>
+  <text x="545" y="1141" class="small">free object</text>
+  <rect x="760" y="1133.5" width="55" height="3" fill="#2dd4bf"/>
+  <polygon points="815,1135 804,1129 804,1141" fill="#2dd4bf"/>
+  <text x="835" y="1141" class="small">stored next pointer</text>
+  <rect x="1100" y="1133.5" width="55" height="3" fill="#fbbf24"/>
+  <polygon points="1155,1135 1144,1129 1144,1141" fill="#fbbf24"/>
+  <text x="1175" y="1141" class="small">free_list</text>
+</svg>

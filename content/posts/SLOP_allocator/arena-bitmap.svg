@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 650" role="img" aria-labelledby="title desc">
+  <title id="title">SLOP arena and page bitmap</title>
+  <desc id="desc">A horizontal 16 MiB memory arena is split into 4096 pages of 0x1000 bytes. Directly below, aligned bitmap entries contain one for allocated pages and zero for free pages.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:21px;font-weight:700;fill:#e2e8f0}
+      .pageName{font-family:monospace;font-size:14px;font-weight:700;fill:#f8fafc}
+      .size{font-family:monospace;font-size:14px;fill:#cbd5e1}
+      .bit{font-family:monospace;font-size:26px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:16px;fill:#cbd5e1}
+      .allocated{fill:#7c2d12;stroke:#0f172a;stroke-width:3}
+      .free{fill:#134e4a;stroke:#0f172a;stroke-width:3}
+      .omitted{fill:#1e293b;stroke:#0f172a;stroke-width:3}
+    </style>
+  </defs>
+
+  <rect width="1500" height="650" rx="18" fill="#0f172a"/>
+  <text x="750" y="52" text-anchor="middle" class="title">Arena and page bitmap</text>
+
+  <text x="100" y="115" class="heading">16 MiB MMAP ARENA</text>
+  <text x="1400" y="115" text-anchor="end" class="small">4096 pages total</text>
+
+  <!-- Every displayed chunk is one 0x1000-byte page. -->
+  <g>
+    <rect x="100" y="140" width="100" height="150" class="allocated"/>
+    <text x="150" y="190" text-anchor="middle" class="pageName">physical</text><text x="150" y="215" text-anchor="middle" class="pageName">page 0</text><text x="150" y="245" text-anchor="middle" class="size">0x1000</text>
+
+    <rect x="200" y="140" width="100" height="150" class="allocated"/>
+    <text x="250" y="190" text-anchor="middle" class="pageName">physical</text><text x="250" y="215" text-anchor="middle" class="pageName">page 1</text><text x="250" y="245" text-anchor="middle" class="size">0x1000</text>
+
+    <rect x="300" y="140" width="100" height="150" class="free"/>
+    <text x="350" y="190" text-anchor="middle" class="pageName">physical</text><text x="350" y="215" text-anchor="middle" class="pageName">page 2</text><text x="350" y="245" text-anchor="middle" class="size">0x1000</text>
+
+    <rect x="400" y="140" width="100" height="150" class="allocated"/>
+    <text x="450" y="190" text-anchor="middle" class="pageName">physical</text><text x="450" y="215" text-anchor="middle" class="pageName">page 3</text><text x="450" y="245" text-anchor="middle" class="size">0x1000</text>
+
+    <rect x="500" y="140" width="100" height="150" class="free"/>
+    <text x="550" y="190" text-anchor="middle" class="pageName">physical</text><text x="550" y="215" text-anchor="middle" class="pageName">page 4</text><text x="550" y="245" text-anchor="middle" class="size">0x1000</text>
+
+    <rect x="600" y="140" width="100" height="150" class="allocated"/>
+    <text x="650" y="190" text-anchor="middle" class="pageName">physical</text><text x="650" y="215" text-anchor="middle" class="pageName">page 5</text><text x="650" y="245" text-anchor="middle" class="size">0x1000</text>
+
+    <rect x="700" y="140" width="100" height="150" class="omitted"/>
+    <text x="750" y="221" text-anchor="middle" class="bit">...</text>
+
+    <rect x="800" y="140" width="100" height="150" class="free"/>
+    <text x="850" y="190" text-anchor="middle" class="pageName">physical</text><text x="850" y="215" text-anchor="middle" class="pageName">page 4090</text><text x="850" y="245" text-anchor="middle" class="size">0x1000</text>
+
+    <rect x="900" y="140" width="100" height="150" class="allocated"/>
+    <text x="950" y="190" text-anchor="middle" class="pageName">physical</text><text x="950" y="215" text-anchor="middle" class="pageName">page 4091</text><text x="950" y="245" text-anchor="middle" class="size">0x1000</text>
+
+    <rect x="1000" y="140" width="100" height="150" class="allocated"/>
+    <text x="1050" y="190" text-anchor="middle" class="pageName">physical</text><text x="1050" y="215" text-anchor="middle" class="pageName">page 4092</text><text x="1050" y="245" text-anchor="middle" class="size">0x1000</text>
+
+    <rect x="1100" y="140" width="100" height="150" class="free"/>
+    <text x="1150" y="190" text-anchor="middle" class="pageName">physical</text><text x="1150" y="215" text-anchor="middle" class="pageName">page 4093</text><text x="1150" y="245" text-anchor="middle" class="size">0x1000</text>
+
+    <rect x="1200" y="140" width="100" height="150" class="allocated"/>
+    <text x="1250" y="190" text-anchor="middle" class="pageName">physical</text><text x="1250" y="215" text-anchor="middle" class="pageName">page 4094</text><text x="1250" y="245" text-anchor="middle" class="size">0x1000</text>
+
+    <rect x="1300" y="140" width="100" height="150" class="free"/>
+    <text x="1350" y="190" text-anchor="middle" class="pageName">physical</text><text x="1350" y="215" text-anchor="middle" class="pageName">page 4095</text><text x="1350" y="245" text-anchor="middle" class="size">0x1000</text>
+  </g>
+
+  <text x="100" y="365" class="heading">PAGE BITMAP</text>
+
+  <!-- Bitmap entries are aligned with the arena pages above. -->
+  <g>
+    <rect x="100" y="390" width="100" height="80" class="allocated"/><text x="150" y="441" text-anchor="middle" class="bit">1</text>
+    <rect x="200" y="390" width="100" height="80" class="allocated"/><text x="250" y="441" text-anchor="middle" class="bit">1</text>
+    <rect x="300" y="390" width="100" height="80" class="free"/><text x="350" y="441" text-anchor="middle" class="bit">0</text>
+    <rect x="400" y="390" width="100" height="80" class="allocated"/><text x="450" y="441" text-anchor="middle" class="bit">1</text>
+    <rect x="500" y="390" width="100" height="80" class="free"/><text x="550" y="441" text-anchor="middle" class="bit">0</text>
+    <rect x="600" y="390" width="100" height="80" class="allocated"/><text x="650" y="441" text-anchor="middle" class="bit">1</text>
+    <rect x="700" y="390" width="100" height="80" class="omitted"/><text x="750" y="441" text-anchor="middle" class="bit">...</text>
+    <rect x="800" y="390" width="100" height="80" class="free"/><text x="850" y="441" text-anchor="middle" class="bit">0</text>
+    <rect x="900" y="390" width="100" height="80" class="allocated"/><text x="950" y="441" text-anchor="middle" class="bit">1</text>
+    <rect x="1000" y="390" width="100" height="80" class="allocated"/><text x="1050" y="441" text-anchor="middle" class="bit">1</text>
+    <rect x="1100" y="390" width="100" height="80" class="free"/><text x="1150" y="441" text-anchor="middle" class="bit">0</text>
+    <rect x="1200" y="390" width="100" height="80" class="allocated"/><text x="1250" y="441" text-anchor="middle" class="bit">1</text>
+    <rect x="1300" y="390" width="100" height="80" class="free"/><text x="1350" y="441" text-anchor="middle" class="bit">0</text>
+  </g>
+
+  <rect x="480" y="535" width="22" height="22" class="allocated"/><text x="516" y="552" class="small">1 = allocated page</text>
+  <rect x="800" y="535" width="22" height="22" class="free"/><text x="836" y="552" class="small">0 = free page</text>
+</svg>

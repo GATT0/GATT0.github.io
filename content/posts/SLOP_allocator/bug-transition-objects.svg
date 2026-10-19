@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 560" role="img" aria-labelledby="title desc">
+  <title id="title">The broken free transition</title>
+  <desc id="desc">Before the free, C is the active page of the 0x400 cache and all four objects are allocated. After object 1 is freed, C still remains active but is also linked after A in ready. Object 1 is now free while the other three objects remain allocated.</desc>
+  <defs><style>
+    .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}.heading{font-family:monospace;font-size:21px;font-weight:700;fill:#f8fafc}.label{font-family:monospace;font-size:17px;font-weight:700;fill:#f8fafc}.small{font-family:monospace;font-size:15px;fill:#cbd5e1}.tiny{font-family:monospace;font-size:12px;font-weight:700;fill:#f8fafc}.panel{fill:#111c2f;stroke:#334155;stroke-width:2}.cache{fill:#164e63;stroke:#22d3ee;stroke-width:3}.active{fill:#164e63;stroke:#22d3ee;stroke-width:3}.ready{fill:#064e3b;stroke:#34d399;stroke-width:3}.full{fill:#4c1d3f;stroke:#fb7185;stroke-width:3}.page{fill:#1e293b;stroke:#64748b;stroke-width:2}.bad{fill:#3f1834;stroke:#fb7185;stroke-width:3}.allocated{fill:#9a3412;stroke:#fb923c;stroke-width:2}.free{fill:#0f766e;stroke:#2dd4bf;stroke-width:2}.warn{font-family:monospace;font-size:16px;font-weight:700;fill:#fda4af}
+  </style></defs>
+  <rect width="1500" height="560" rx="18" fill="#0f172a"/>
+  <text x="750" y="48" text-anchor="middle" class="title">The broken transition</text>
+
+  <!-- Before: C is full, but it is still the active page. -->
+  <rect x="45" y="78" width="650" height="400" rx="14" class="panel"/>
+  <text x="75" y="114" class="heading">BEFORE FREE</text>
+  <rect x="75" y="135" width="180" height="300" rx="10" class="cache"/>
+  <text x="95" y="168" class="label">cache 0x400</text>
+  <text x="95" y="231" class="small">active</text><circle cx="232" cy="225" r="6" fill="#22d3ee"/>
+  <text x="95" y="321" class="small">ready</text><circle cx="232" cy="315" r="6" fill="#34d399"/>
+  <text x="95" y="411" class="small">full</text><circle cx="232" cy="405" r="6" fill="#fb7185"/>
+
+  <rect x="285" y="190" width="365" height="72" rx="8" class="active"/>
+  <text x="310" y="233" class="label">C</text>
+  <g transform="translate(386 207)">
+    <rect x="0" y="0" width="48" height="38" rx="3" class="allocated"/><text x="24" y="25" text-anchor="middle" class="tiny">0</text>
+    <rect x="56" y="0" width="48" height="38" rx="3" class="allocated"/><text x="80" y="25" text-anchor="middle" class="tiny">1</text>
+    <rect x="112" y="0" width="48" height="38" rx="3" class="allocated"/><text x="136" y="25" text-anchor="middle" class="tiny">2</text>
+    <rect x="168" y="0" width="48" height="38" rx="3" class="allocated"/><text x="192" y="25" text-anchor="middle" class="tiny">3</text>
+  </g>
+  <rect x="285" y="280" width="365" height="72" rx="8" class="ready"/>
+  <rect x="400" y="292" width="135" height="48" rx="7" class="page"/><text x="467" y="322" text-anchor="middle" class="label">A</text>
+  <rect x="285" y="370" width="365" height="72" rx="8" class="full"/>
+  <rect x="400" y="382" width="135" height="48" rx="7" class="page"/><text x="467" y="412" text-anchor="middle" class="label">B</text>
+
+  <!-- The vulnerable decision. -->
+  <text x="750" y="203" text-anchor="middle" class="warn">free</text>
+  <text x="750" y="225" text-anchor="middle" class="warn">object 1</text>
+  <rect x="711" y="239" width="65" height="4" fill="#fb7185"/>
+  <polygon points="790,241 776,233 776,249" fill="#fb7185"/>
+
+  <!-- After: the two cache paths both reach C. -->
+  <rect x="805" y="78" width="650" height="400" rx="14" class="panel"/>
+  <text x="835" y="114" class="heading">AFTER FREE</text>
+  <rect x="835" y="135" width="180" height="300" rx="10" class="cache"/>
+  <text x="855" y="168" class="label">cache 0x400</text>
+  <text x="855" y="231" class="small">active</text><circle cx="992" cy="225" r="6" fill="#22d3ee"/>
+  <text x="855" y="321" class="small">ready</text><circle cx="992" cy="315" r="6" fill="#34d399"/>
+  <text x="855" y="411" class="small">full</text><circle cx="992" cy="405" r="6" fill="#fb7185"/>
+
+  <rect x="1045" y="190" width="365" height="72" rx="8" class="bad"/>
+  <text x="1070" y="233" class="label">C</text>
+  <g transform="translate(1146 207)">
+    <rect x="0" y="0" width="48" height="38" rx="3" class="allocated"/><text x="24" y="25" text-anchor="middle" class="tiny">0</text>
+    <rect x="56" y="0" width="48" height="38" rx="3" class="free"/><text x="80" y="25" text-anchor="middle" class="tiny">1</text>
+    <rect x="112" y="0" width="48" height="38" rx="3" class="allocated"/><text x="136" y="25" text-anchor="middle" class="tiny">2</text>
+    <rect x="168" y="0" width="48" height="38" rx="3" class="allocated"/><text x="192" y="25" text-anchor="middle" class="tiny">3</text>
+  </g>
+  <rect x="1045" y="280" width="365" height="72" rx="8" class="ready"/>
+  <rect x="1060" y="292" width="92" height="48" rx="7" class="page"/><text x="1106" y="322" text-anchor="middle" class="label">A</text>
+  <text x="1174" y="322" text-anchor="middle" class="label">⇄</text>
+  <rect x="1195" y="287" width="200" height="58" rx="7" class="bad"/>
+  <text x="1213" y="322" class="label">C</text>
+  <g transform="translate(1245 299)">
+    <rect x="0" y="0" width="30" height="34" rx="2" class="allocated"/>
+    <rect x="36" y="0" width="30" height="34" rx="2" class="free"/>
+    <rect x="72" y="0" width="30" height="34" rx="2" class="allocated"/>
+    <rect x="108" y="0" width="30" height="34" rx="2" class="allocated"/>
+  </g>
+  <rect x="1045" y="370" width="365" height="72" rx="8" class="full"/>
+  <rect x="1160" y="382" width="135" height="48" rx="7" class="page"/><text x="1227" y="412" text-anchor="middle" class="label">B</text>
+
+  <rect x="420" y="510" width="22" height="22" rx="2" class="allocated"/><text x="455" y="527" class="small">allocated object</text>
+  <rect x="670" y="510" width="22" height="22" rx="2" class="free"/><text x="705" y="527" class="small">free object</text>
+  <text x="1040" y="527" class="warn">INVALID: active and ready both reach C</text>
+</svg>

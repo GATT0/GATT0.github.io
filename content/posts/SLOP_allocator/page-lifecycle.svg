@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 860" role="img" aria-labelledby="title desc">
+  <title id="title">SLOP page lifecycle</title>
+  <desc id="desc">A full active page moves to the full list on the next allocation. Freeing an object moves it to the ready list, from which it can become active again or be released to the global page bitmap.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:21px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:18px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:15px;fill:#cbd5e1}
+      .tiny{font-family:monospace;font-size:13px;fill:#94a3b8}
+      .arrowLabel{font-family:monospace;font-size:18px;font-weight:700;fill:#f8fafc}
+      .labelBox{fill:#0f172a;stroke-width:2}
+      .active{fill:#164e63;stroke:#22d3ee;stroke-width:3}
+      .full{fill:#4c1d3f;stroke:#fb7185;stroke-width:3}
+      .ready{fill:#064e3b;stroke:#34d399;stroke-width:3}
+      .global{fill:#1e293b;stroke:#64748b;stroke-width:3}
+      .page{fill:#1e293b;stroke:#64748b;stroke-width:2}
+      .allocated{fill:#9a3412;stroke:#fb923c;stroke-width:1.5}
+      .free{fill:#0f766e;stroke:#2dd4bf;stroke-width:1.5}
+    </style>
+  </defs>
+
+  <rect width="1500" height="860" rx="18" fill="#0f172a"/>
+  <text x="750" y="52" text-anchor="middle" class="title">Page lifecycle</text>
+
+  <!-- Three equally sized and aligned cache states -->
+  <rect x="50" y="120" width="420" height="280" rx="14" class="active"/>
+  <text x="260" y="162" text-anchor="middle" class="heading">ACTIVE</text>
+  <rect x="100" y="185" width="320" height="70" rx="9" class="page"/>
+  <text x="260" y="214" text-anchor="middle" class="label">page A</text>
+  <text x="260" y="239" text-anchor="middle" class="small">free_list = NULL</text>
+  <g transform="translate(86 295)">
+    <rect x="0" y="0" width="18" height="52" class="allocated"/><rect x="22" y="0" width="18" height="52" class="allocated"/><rect x="44" y="0" width="18" height="52" class="allocated"/><rect x="66" y="0" width="18" height="52" class="allocated"/>
+    <rect x="88" y="0" width="18" height="52" class="allocated"/><rect x="110" y="0" width="18" height="52" class="allocated"/><rect x="132" y="0" width="18" height="52" class="allocated"/><rect x="154" y="0" width="18" height="52" class="allocated"/>
+    <rect x="176" y="0" width="18" height="52" class="allocated"/><rect x="198" y="0" width="18" height="52" class="allocated"/><rect x="220" y="0" width="18" height="52" class="allocated"/><rect x="242" y="0" width="18" height="52" class="allocated"/>
+    <rect x="264" y="0" width="18" height="52" class="allocated"/><rect x="286" y="0" width="18" height="52" class="allocated"/><rect x="308" y="0" width="18" height="52" class="allocated"/><rect x="330" y="0" width="18" height="52" class="allocated"/>
+  </g>
+
+  <rect x="540" y="120" width="420" height="280" rx="14" class="full"/>
+  <text x="750" y="162" text-anchor="middle" class="heading">FULL_LIST</text>
+  <rect x="570" y="185" width="140" height="70" rx="9" class="page"/>
+  <text x="640" y="227" text-anchor="middle" class="label">page C</text>
+  <text x="750" y="227" text-anchor="middle" class="heading" fill="#fb7185">⇄ ... ⇄</text>
+  <rect x="790" y="185" width="140" height="70" rx="9" class="page"/>
+  <text x="860" y="227" text-anchor="middle" class="label">page A</text>
+  <g transform="translate(576 295)">
+    <rect x="0" y="0" width="18" height="52" class="allocated"/><rect x="22" y="0" width="18" height="52" class="allocated"/><rect x="44" y="0" width="18" height="52" class="allocated"/><rect x="66" y="0" width="18" height="52" class="allocated"/>
+    <rect x="88" y="0" width="18" height="52" class="allocated"/><rect x="110" y="0" width="18" height="52" class="allocated"/><rect x="132" y="0" width="18" height="52" class="allocated"/><rect x="154" y="0" width="18" height="52" class="allocated"/>
+    <rect x="176" y="0" width="18" height="52" class="allocated"/><rect x="198" y="0" width="18" height="52" class="allocated"/><rect x="220" y="0" width="18" height="52" class="allocated"/><rect x="242" y="0" width="18" height="52" class="allocated"/>
+    <rect x="264" y="0" width="18" height="52" class="allocated"/><rect x="286" y="0" width="18" height="52" class="allocated"/><rect x="308" y="0" width="18" height="52" class="allocated"/><rect x="330" y="0" width="18" height="52" class="allocated"/>
+  </g>
+
+  <rect x="1030" y="120" width="420" height="280" rx="14" class="ready"/>
+  <text x="1240" y="162" text-anchor="middle" class="heading">READY_LIST</text>
+  <rect x="1060" y="185" width="140" height="70" rx="9" class="page"/>
+  <text x="1130" y="227" text-anchor="middle" class="label">page D</text>
+  <text x="1240" y="227" text-anchor="middle" class="heading" fill="#34d399">⇄ ... ⇄</text>
+  <rect x="1280" y="185" width="140" height="70" rx="9" class="page"/>
+  <text x="1350" y="227" text-anchor="middle" class="label">page A</text>
+  <g transform="translate(1066 295)">
+    <rect x="0" y="0" width="18" height="52" class="allocated"/><rect x="22" y="0" width="18" height="52" class="allocated"/><rect x="44" y="0" width="18" height="52" class="allocated"/><rect x="66" y="0" width="18" height="52" class="allocated"/>
+    <rect x="88" y="0" width="18" height="52" class="free"/><rect x="110" y="0" width="18" height="52" class="free"/><rect x="132" y="0" width="18" height="52" class="free"/><rect x="154" y="0" width="18" height="52" class="free"/>
+    <rect x="176" y="0" width="18" height="52" class="free"/><rect x="198" y="0" width="18" height="52" class="free"/><rect x="220" y="0" width="18" height="52" class="free"/><rect x="242" y="0" width="18" height="52" class="free"/>
+    <rect x="264" y="0" width="18" height="52" class="free"/><rect x="286" y="0" width="18" height="52" class="free"/><rect x="308" y="0" width="18" height="52" class="free"/><rect x="330" y="0" width="18" height="52" class="free"/>
+  </g>
+
+  <!-- Centered global state -->
+  <rect x="550" y="610" width="400" height="150" rx="14" class="global"/>
+  <text x="750" y="650" text-anchor="middle" class="heading">GLOBAL PAGE BITMAP</text>
+  <rect x="590" y="675" width="320" height="55" rx="9" class="page"/>
+  <text x="750" y="710" text-anchor="middle" class="label">page A — available</text>
+
+  <!-- active -> full_list -->
+  <rect x="470" y="258" width="59" height="4" fill="#fb7185"/>
+  <polygon points="529,252 540,260 529,268" fill="#fb7185"/>
+  <rect x="453" y="270" width="104" height="34" rx="8" class="labelBox" stroke="#fb7185"/>
+  <text x="505" y="293" text-anchor="middle" class="arrowLabel">allocate</text>
+
+  <!-- full_list -> ready_list -->
+  <rect x="960" y="258" width="59" height="4" fill="#34d399"/>
+  <polygon points="1019,252 1030,260 1019,268" fill="#34d399"/>
+  <rect x="960" y="270" width="70" height="34" rx="8" class="labelBox" stroke="#34d399"/>
+  <text x="995" y="293" text-anchor="middle" class="arrowLabel">free</text>
+
+  <!-- ready_list -> active -->
+  <rect x="1178" y="400" width="4" height="80" fill="#34d399"/>
+  <rect x="260" y="476" width="922" height="4" fill="#34d399"/>
+  <rect x="258" y="400" width="4" height="80" fill="#34d399"/>
+  <polygon points="252,411 260,400 268,411" fill="#34d399"/>
+  <rect x="590" y="450" width="260" height="36" rx="8" class="labelBox" stroke="#34d399"/>
+  <text x="720" y="474" text-anchor="middle" class="arrowLabel">select a ready page</text>
+
+  <!-- ready_list -> global page bitmap -->
+  <rect x="1298" y="400" width="4" height="285" fill="#64748b"/>
+  <rect x="950" y="683" width="352" height="4" fill="#64748b"/>
+  <polygon points="961,677 950,685 961,693" fill="#64748b"/>
+  <rect x="985" y="655" width="280" height="36" rx="8" class="labelBox" stroke="#64748b"/>
+  <text x="1125" y="679" text-anchor="middle" class="arrowLabel">release an empty page</text>
+
+  <!-- global page bitmap -> active -->
+  <rect x="178" y="400" width="4" height="285" fill="#22d3ee"/>
+  <rect x="180" y="683" width="370" height="4" fill="#22d3ee"/>
+  <polygon points="172,411 180,400 188,411" fill="#22d3ee"/>
+  <rect x="240" y="655" width="250" height="36" rx="8" class="labelBox" stroke="#22d3ee"/>
+  <text x="365" y="679" text-anchor="middle" class="arrowLabel">allocate a new page</text>
+
+  <!-- Centered legend -->
+  <rect x="570" y="808" width="22" height="22" class="allocated"/>
+  <text x="604" y="825" class="small">allocated object</text>
+  <rect x="800" y="808" width="22" height="22" class="free"/>
+  <text x="834" y="825" class="small">free object</text>
+</svg>

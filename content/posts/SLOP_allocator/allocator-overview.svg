@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 860" role="img" aria-labelledby="title desc">
+  <title id="title">SLOP cache, page-list, and object structure</title>
+  <desc id="desc">A selected size cache has one direct active-page pointer and two list heads for ready and full pages. Page structures link to physical pages in the arena, where memory is divided into fixed-size objects.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .subtitle{font-family:monospace;font-size:17px;fill:#94a3b8}
+      .heading{font-family:monospace;font-size:20px;font-weight:700;fill:#e2e8f0}
+      .label{font-family:monospace;font-size:18px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:15px;fill:#cbd5e1}
+      .tiny{font-family:monospace;font-size:13px;fill:#94a3b8}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2}
+      .cache{fill:#1e293b;stroke:#475569;stroke-width:2}
+      .selected{fill:#164e63;stroke:#22d3ee;stroke-width:3}
+      .page{fill:#1e293b;stroke:#64748b;stroke-width:2}
+      .activePage{fill:#1e293b;stroke:#22d3ee;stroke-width:3}
+      .readyHead{fill:#064e3b;stroke:#34d399;stroke-width:3}
+      .readyPage{fill:#1e293b;stroke:#34d399;stroke-width:3}
+      .fullHead{fill:#4c1d3f;stroke:#fb7185;stroke-width:3}
+      .fullPage{fill:#1e293b;stroke:#fb7185;stroke-width:3}
+      .arena{fill:#052e2b;stroke:#34d399;stroke-width:2}
+      .physical{fill:#064e3b;stroke:#34d399;stroke-width:2}
+      .allocated{fill:#9a3412;stroke:#fb923c;stroke-width:1.5}
+      .free{fill:#0f766e;stroke:#2dd4bf;stroke-width:1.5}
+    </style>
+  </defs>
+
+  <rect width="1500" height="860" rx="18" fill="#0f172a"/>
+  <text x="38" y="48" class="title">Allocator overview</text>
+
+  <!-- Size-cache column -->
+  <rect x="35" y="105" width="300" height="710" rx="14" class="panel"/>
+  <text x="65" y="140" class="heading">SIZE CACHES</text>
+
+  <rect x="65" y="180" width="240" height="42" rx="8" class="cache"/><text x="88" y="207" class="small">cache 0x10</text>
+  <rect x="65" y="232" width="240" height="42" rx="8" class="cache"/><text x="88" y="259" class="small">cache 0x20</text>
+  <rect x="65" y="284" width="240" height="42" rx="8" class="cache"/><text x="88" y="311" class="small">cache 0x40</text>
+  <rect x="65" y="336" width="240" height="42" rx="8" class="cache"/><text x="88" y="363" class="small">cache 0x80</text>
+
+  <rect x="65" y="398" width="240" height="150" rx="10" class="selected"/>
+  <text x="88" y="429" class="label">cache 0x100</text>
+  <text x="88" y="464" class="small">active</text><circle cx="292" cy="459" r="6" fill="#22d3ee"/>
+  <text x="88" y="495" class="small">ready_list</text><circle cx="292" cy="490" r="6" fill="#34d399"/>
+  <text x="88" y="526" class="small">full_list</text><circle cx="292" cy="521" r="6" fill="#fb7185"/>
+
+  <rect x="65" y="568" width="240" height="42" rx="8" class="cache"/><text x="88" y="595" class="small">cache 0x200</text>
+  <rect x="65" y="620" width="240" height="42" rx="8" class="cache"/><text x="88" y="647" class="small">cache 0x400</text>
+  <rect x="65" y="672" width="240" height="42" rx="8" class="cache"/><text x="88" y="699" class="small">cache 0x800</text>
+  <rect x="65" y="724" width="240" height="42" rx="8" class="cache"/><text x="88" y="751" class="small">cache 0x1000</text>
+
+  <!-- Metadata/list column -->
+  <rect x="405" y="105" width="500" height="710" rx="14" class="panel"/>
+  <text x="435" y="140" class="heading">PAGE STRUCTS</text>
+
+  <!-- active points directly to page A -->
+  <rect x="600" y="180" width="270" height="140" rx="10" class="activePage"/>
+  <text x="625" y="208" class="label">struct page A</text>
+  <text x="625" y="234" class="small">back: cache 0x100</text>
+  <text x="625" y="258" class="small">free_list: object 6</text>
+  <text x="625" y="282" class="small">list node: detached</text>
+  <text x="625" y="306" class="small">start: physical page A</text>
+
+  <!-- ready_list contains multiple page structs -->
+  <rect x="435" y="355" width="435" height="160" rx="12" class="readyHead"/>
+  <text x="455" y="383" class="label">ready_list</text>
+  <rect x="455" y="408" width="145" height="70" rx="8" class="page"/>
+  <text x="482" y="450" class="label">page D</text>
+  <text x="608" y="451" class="heading" fill="#34d399">⇄ ... ⇄</text>
+  <rect x="700" y="408" width="150" height="70" rx="8" class="page"/>
+  <text x="728" y="450" class="label">page B</text>
+
+  <!-- full_list contains multiple page structs -->
+  <rect x="435" y="540" width="435" height="160" rx="12" class="fullHead"/>
+  <text x="455" y="568" class="label">full_list</text>
+  <rect x="455" y="593" width="145" height="70" rx="8" class="page"/>
+  <text x="482" y="635" class="label">page E</text>
+  <text x="608" y="636" class="heading" fill="#fb7185">⇄ ... ⇄</text>
+  <rect x="700" y="593" width="150" height="70" rx="8" class="page"/>
+  <text x="728" y="635" class="label">page C</text>
+
+  <!-- Three distinct cache links -->
+  <rect x="298" y="457" width="85" height="4" fill="#22d3ee"/><rect x="379" y="250" width="4" height="211" fill="#22d3ee"/><rect x="381" y="248" width="208" height="4" fill="#22d3ee"/><polygon points="589,242 600,250 589,258" fill="#22d3ee"/>
+  <rect x="298" y="488" width="126" height="4" fill="#34d399"/><rect x="420" y="442" width="4" height="50" fill="#34d399"/><rect x="422" y="440" width="2" height="4" fill="#34d399"/><polygon points="424,434 435,442 424,450" fill="#34d399"/>
+  <rect x="298" y="519" width="95" height="4" fill="#fb7185"/><rect x="389" y="521" width="4" height="101" fill="#fb7185"/><rect x="391" y="618" width="33" height="4" fill="#fb7185"/><polygon points="424,612 435,620 424,628" fill="#fb7185"/>
+
+  <!-- Physical pages and objects -->
+  <rect x="955" y="105" width="510" height="710" rx="14" class="arena"/>
+  <text x="985" y="140" class="heading">PHYSICAL PAGES</text>
+
+  <rect x="985" y="180" width="450" height="140" rx="10" class="physical"/>
+  <text x="1010" y="211" class="label">physical page A</text><text x="1275" y="211" class="tiny">16 × 0x100</text>
+  <g transform="translate(1010 240)">
+    <rect x="0" y="0" width="21" height="49" class="allocated"/><rect x="25" y="0" width="21" height="49" class="allocated"/><rect x="50" y="0" width="21" height="49" class="allocated"/><rect x="75" y="0" width="21" height="49" class="allocated"/><rect x="100" y="0" width="21" height="49" class="allocated"/><rect x="125" y="0" width="21" height="49" class="allocated"/>
+    <rect x="150" y="0" width="21" height="49" class="free"/><rect x="175" y="0" width="21" height="49" class="free"/><rect x="200" y="0" width="21" height="49" class="free"/><rect x="225" y="0" width="21" height="49" class="free"/><rect x="250" y="0" width="21" height="49" class="free"/><rect x="275" y="0" width="21" height="49" class="free"/><rect x="300" y="0" width="21" height="49" class="free"/><rect x="325" y="0" width="21" height="49" class="free"/><rect x="350" y="0" width="21" height="49" class="free"/><rect x="375" y="0" width="21" height="49" class="free"/>
+  </g>
+
+  <rect x="985" y="365" width="450" height="140" rx="10" class="physical"/>
+  <text x="1010" y="396" class="label">physical page B</text><text x="1275" y="396" class="tiny">16 × 0x100</text>
+  <g transform="translate(1010 425)">
+    <rect x="0" y="0" width="21" height="49" class="allocated"/><rect x="25" y="0" width="21" height="49" class="allocated"/><rect x="50" y="0" width="21" height="49" class="allocated"/><rect x="75" y="0" width="21" height="49" class="allocated"/>
+    <rect x="100" y="0" width="21" height="49" class="free"/><rect x="125" y="0" width="21" height="49" class="free"/><rect x="150" y="0" width="21" height="49" class="free"/><rect x="175" y="0" width="21" height="49" class="free"/><rect x="200" y="0" width="21" height="49" class="free"/><rect x="225" y="0" width="21" height="49" class="free"/><rect x="250" y="0" width="21" height="49" class="free"/><rect x="275" y="0" width="21" height="49" class="free"/><rect x="300" y="0" width="21" height="49" class="free"/><rect x="325" y="0" width="21" height="49" class="free"/><rect x="350" y="0" width="21" height="49" class="free"/><rect x="375" y="0" width="21" height="49" class="free"/>
+  </g>
+
+  <rect x="985" y="550" width="450" height="140" rx="10" class="physical"/>
+  <text x="1010" y="581" class="label">physical page C</text><text x="1275" y="581" class="tiny">16 × 0x100</text>
+  <g transform="translate(1010 610)">
+    <rect x="0" y="0" width="21" height="49" class="allocated"/><rect x="25" y="0" width="21" height="49" class="allocated"/><rect x="50" y="0" width="21" height="49" class="allocated"/><rect x="75" y="0" width="21" height="49" class="allocated"/><rect x="100" y="0" width="21" height="49" class="allocated"/><rect x="125" y="0" width="21" height="49" class="allocated"/><rect x="150" y="0" width="21" height="49" class="allocated"/><rect x="175" y="0" width="21" height="49" class="allocated"/><rect x="200" y="0" width="21" height="49" class="allocated"/><rect x="225" y="0" width="21" height="49" class="allocated"/><rect x="250" y="0" width="21" height="49" class="allocated"/><rect x="275" y="0" width="21" height="49" class="allocated"/><rect x="300" y="0" width="21" height="49" class="allocated"/><rect x="325" y="0" width="21" height="49" class="allocated"/><rect x="350" y="0" width="21" height="49" class="allocated"/><rect x="375" y="0" width="21" height="49" class="allocated"/>
+  </g>
+
+  <!-- page->start links -->
+  <rect x="870" y="248" width="104" height="4" fill="#22d3ee"/><polygon points="974,242 985,250 974,258" fill="#22d3ee"/>
+  <rect x="850" y="433" width="124" height="4" fill="#34d399"/><polygon points="974,427 985,435 974,443" fill="#34d399"/>
+  <rect x="850" y="618" width="124" height="4" fill="#fb7185"/><polygon points="974,612 985,620 974,628" fill="#fb7185"/>
+
+  <rect x="990" y="744" width="22" height="22" class="allocated"/><text x="1022" y="761" class="small">allocated object</text>
+  <rect x="1210" y="744" width="22" height="22" class="free"/><text x="1242" y="761" class="small">free object</text>
+</svg>
