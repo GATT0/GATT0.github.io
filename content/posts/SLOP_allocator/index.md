@@ -1,7 +1,7 @@
 ---
 title: "SLOP Allocator: From a Broken Invariant to RCE"
 date: 2026-10-18
-draft: true
+draft: false
 tags: ["pwn", "heap", "Linux Kernel", "CTF"]
 summary: "How one wrong page transition broke my SLUB-inspired allocator and turned into RCE"
 ---
