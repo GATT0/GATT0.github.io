@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 920" role="img" aria-labelledby="title desc">
+  <title id="title">Scoring candidate fingerprints</title>
+  <desc id="desc">Sparse target and candidate dictionaries contain only mnemonics that occur at least once. Each candidate is compared with the target to produce a complete difference dictionary. The difference values are summed and block two wins with the lowest score.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:20px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:18px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:16px;fill:#cbd5e1}
+      .value{font-family:monospace;font-size:18px;font-weight:700;fill:#fbbf24}
+      .target{fill:#064e3b;stroke:#34d399;stroke-width:3}
+      .candidate{fill:#164e63;stroke:#22d3ee;stroke-width:3}
+      .winner{fill:#422006;stroke:#fbbf24;stroke-width:4}
+      .difference{fill:#3f1834;stroke:#fb7185;stroke-width:3}
+      .bestDifference{fill:#422006;stroke:#fbbf24;stroke-width:4}
+      .targetEntry{fill:#172033;stroke:#34d399;stroke-width:1.5}
+      .candidateEntry{fill:#172033;stroke:#22d3ee;stroke-width:1.5}
+      .differenceEntry{fill:#172033;stroke:#fb7185;stroke-width:1.5}
+      .bestEntry{fill:#172033;stroke:#fbbf24;stroke-width:1.5}
+      .score{fill:#1e293b;stroke:#94a3b8;stroke-width:2}
+      .bestScore{fill:#713f12;stroke:#fbbf24;stroke-width:3}
+      .result{fill:#4c1d3f;stroke:#fb7185;stroke-width:3}
+      .gold{fill:#fbbf24}
+    </style>
+  </defs>
+
+  <rect width="900" height="920" rx="16" fill="#0f172a"/>
+  <text x="450" y="35" text-anchor="middle" class="title">Scoring the candidates</text>
+
+  <!-- Zero-count mnemonics are absent from the sparse target dictionary. -->
+  <rect x="310" y="52" width="280" height="210" rx="11" class="target"/>
+  <text x="450" y="79" text-anchor="middle" class="heading">TARGET FINGERPRINT</text>
+  <g transform="translate(370 94)">
+    <rect x="0" y="0" width="160" height="26" rx="5" class="targetEntry"/><text x="12" y="19" class="small">addiu</text><text x="145" y="20" text-anchor="end" class="value">2</text>
+    <rect x="0" y="31" width="160" height="26" rx="5" class="targetEntry"/><text x="12" y="50" class="small">sw</text><text x="145" y="51" text-anchor="end" class="value">3</text>
+    <rect x="0" y="62" width="160" height="26" rx="5" class="targetEntry"/><text x="12" y="81" class="small">jal</text><text x="145" y="82" text-anchor="end" class="value">1</text>
+    <rect x="0" y="93" width="160" height="26" rx="5" class="targetEntry"/><text x="12" y="112" class="small">jr</text><text x="145" y="113" text-anchor="end" class="value">3</text>
+    <rect x="0" y="124" width="160" height="26" rx="5" class="targetEntry"/><text x="12" y="143" class="small">move</text><text x="145" y="144" text-anchor="end" class="value">1</text>
+  </g>
+
+  <!-- The target fans out to every sparse block fingerprint. -->
+  <rect x="448" y="262" width="4" height="24" class="gold"/>
+  <rect x="130" y="282" width="640" height="4" class="gold"/>
+  <rect x="128" y="284" width="4" height="43" class="gold"/><polygon points="130,340 120,326 140,326" class="gold"/>
+  <rect x="448" y="284" width="4" height="13" class="gold"/><polygon points="450,310 440,296 460,296" class="gold"/>
+  <rect x="768" y="284" width="4" height="74" class="gold"/><polygon points="770,371 760,357 780,357" class="gold"/>
+
+  <!-- Sparse block fingerprints: missing mnemonics are not stored as zero. -->
+  <rect x="20" y="340" width="220" height="160" rx="10" class="candidate"/>
+  <text x="130" y="366" text-anchor="middle" class="heading">BLOCK #1</text>
+  <g transform="translate(60 378)">
+    <rect x="0" y="0" width="140" height="25" rx="5" class="candidateEntry"/><text x="10" y="18" class="small">addiu</text><text x="127" y="19" text-anchor="end" class="value">1</text>
+    <rect x="0" y="30" width="140" height="25" rx="5" class="candidateEntry"/><text x="10" y="48" class="small">sw</text><text x="127" y="49" text-anchor="end" class="value">5</text>
+    <rect x="0" y="60" width="140" height="25" rx="5" class="candidateEntry"/><text x="10" y="78" class="small">lw</text><text x="127" y="79" text-anchor="end" class="value">4</text>
+    <rect x="0" y="90" width="140" height="25" rx="5" class="candidateEntry"/><text x="10" y="108" class="small">jr</text><text x="127" y="109" text-anchor="end" class="value">1</text>
+  </g>
+
+  <rect x="340" y="310" width="220" height="190" rx="10" class="winner"/>
+  <text x="450" y="336" text-anchor="middle" class="heading">BLOCK #2</text>
+  <g transform="translate(380 348)">
+    <rect x="0" y="0" width="140" height="25" rx="5" class="bestEntry"/><text x="10" y="18" class="small">addiu</text><text x="127" y="19" text-anchor="end" class="value">2</text>
+    <rect x="0" y="30" width="140" height="25" rx="5" class="bestEntry"/><text x="10" y="48" class="small">sw</text><text x="127" y="49" text-anchor="end" class="value">3</text>
+    <rect x="0" y="60" width="140" height="25" rx="5" class="bestEntry"/><text x="10" y="78" class="small">jal</text><text x="127" y="79" text-anchor="end" class="value">1</text>
+    <rect x="0" y="90" width="140" height="25" rx="5" class="bestEntry"/><text x="10" y="108" class="small">lw</text><text x="127" y="109" text-anchor="end" class="value">2</text>
+    <rect x="0" y="120" width="140" height="25" rx="5" class="bestEntry"/><text x="10" y="138" class="small">jr</text><text x="127" y="139" text-anchor="end" class="value">1</text>
+  </g>
+
+  <text x="610" y="424" text-anchor="middle" class="heading">···</text>
+
+  <rect x="660" y="371" width="220" height="129" rx="10" class="candidate"/>
+  <text x="770" y="397" text-anchor="middle" class="heading">BLOCK #N</text>
+  <g transform="translate(700 409)">
+    <rect x="0" y="0" width="140" height="25" rx="5" class="candidateEntry"/><text x="10" y="18" class="small">sw</text><text x="127" y="19" text-anchor="end" class="value">7</text>
+    <rect x="0" y="30" width="140" height="25" rx="5" class="candidateEntry"/><text x="10" y="48" class="small">jal</text><text x="127" y="49" text-anchor="end" class="value">3</text>
+    <rect x="0" y="60" width="140" height="25" rx="5" class="candidateEntry"/><text x="10" y="78" class="small">lw</text><text x="127" y="79" text-anchor="end" class="value">5</text>
+  </g>
+
+  <!-- Missing keys reappear in the complete difference dictionaries. -->
+  <rect x="128" y="500" width="4" height="9" class="gold"/><text x="130" y="527" text-anchor="middle" class="small">|target - block|</text><polygon points="130,548 120,534 140,534" class="gold"/>
+  <rect x="448" y="500" width="4" height="9" class="gold"/><text x="450" y="527" text-anchor="middle" class="small">|target - block|</text><polygon points="450,548 440,534 460,534" class="gold"/>
+  <rect x="768" y="500" width="4" height="9" class="gold"/><text x="770" y="527" text-anchor="middle" class="small">|target - block|</text><polygon points="770,548 760,534 780,534" class="gold"/>
+
+  <rect x="20" y="548" width="220" height="225" rx="10" class="difference"/>
+  <text x="130" y="574" text-anchor="middle" class="heading">DIFFERENCE #1</text>
+  <g transform="translate(60 586)">
+    <rect x="0" y="0" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="17" class="small">addiu</text><text x="127" y="18" text-anchor="end" class="value">1</text>
+    <rect x="0" y="29" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="46" class="small">sw</text><text x="127" y="47" text-anchor="end" class="value">2</text>
+    <rect x="0" y="58" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="75" class="small">jal</text><text x="127" y="76" text-anchor="end" class="value">1</text>
+    <rect x="0" y="87" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="104" class="small">lw</text><text x="127" y="105" text-anchor="end" class="value">4</text>
+    <rect x="0" y="116" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="133" class="small">jr</text><text x="127" y="134" text-anchor="end" class="value">2</text>
+    <rect x="0" y="145" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="162" class="small">move</text><text x="127" y="163" text-anchor="end" class="value">1</text>
+  </g>
+
+  <rect x="340" y="548" width="220" height="225" rx="10" class="bestDifference"/>
+  <text x="450" y="574" text-anchor="middle" class="heading">DIFFERENCE #2</text>
+  <g transform="translate(380 586)">
+    <rect x="0" y="0" width="140" height="24" rx="5" class="bestEntry"/><text x="10" y="17" class="small">addiu</text><text x="127" y="18" text-anchor="end" class="value">0</text>
+    <rect x="0" y="29" width="140" height="24" rx="5" class="bestEntry"/><text x="10" y="46" class="small">sw</text><text x="127" y="47" text-anchor="end" class="value">0</text>
+    <rect x="0" y="58" width="140" height="24" rx="5" class="bestEntry"/><text x="10" y="75" class="small">jal</text><text x="127" y="76" text-anchor="end" class="value">0</text>
+    <rect x="0" y="87" width="140" height="24" rx="5" class="bestEntry"/><text x="10" y="104" class="small">lw</text><text x="127" y="105" text-anchor="end" class="value">2</text>
+    <rect x="0" y="116" width="140" height="24" rx="5" class="bestEntry"/><text x="10" y="133" class="small">jr</text><text x="127" y="134" text-anchor="end" class="value">2</text>
+    <rect x="0" y="145" width="140" height="24" rx="5" class="bestEntry"/><text x="10" y="162" class="small">move</text><text x="127" y="163" text-anchor="end" class="value">1</text>
+  </g>
+
+  <rect x="660" y="548" width="220" height="225" rx="10" class="difference"/>
+  <text x="770" y="574" text-anchor="middle" class="heading">DIFFERENCE #N</text>
+  <g transform="translate(700 586)">
+    <rect x="0" y="0" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="17" class="small">addiu</text><text x="127" y="18" text-anchor="end" class="value">2</text>
+    <rect x="0" y="29" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="46" class="small">sw</text><text x="127" y="47" text-anchor="end" class="value">4</text>
+    <rect x="0" y="58" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="75" class="small">jal</text><text x="127" y="76" text-anchor="end" class="value">2</text>
+    <rect x="0" y="87" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="104" class="small">lw</text><text x="127" y="105" text-anchor="end" class="value">5</text>
+    <rect x="0" y="116" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="133" class="small">jr</text><text x="127" y="134" text-anchor="end" class="value">3</text>
+    <rect x="0" y="145" width="140" height="24" rx="5" class="differenceEntry"/><text x="10" y="162" class="small">move</text><text x="127" y="163" text-anchor="end" class="value">1</text>
+  </g>
+
+  <rect x="50" y="785" width="160" height="42" rx="7" class="score"/><text x="130" y="812" text-anchor="middle" class="label">score = 11</text>
+  <rect x="370" y="785" width="160" height="42" rx="7" class="bestScore"/><text x="450" y="812" text-anchor="middle" class="label">score = 5</text>
+  <rect x="690" y="785" width="160" height="42" rx="7" class="score"/><text x="770" y="812" text-anchor="middle" class="label">score = 17</text>
+
+  <rect x="448" y="827" width="4" height="15" class="gold"/><polygon points="450,852 440,839 460,839" class="gold"/>
+  <rect x="260" y="852" width="380" height="56" rx="9" class="result"/>
+  <text x="450" y="875" text-anchor="middle" class="label">LOWEST SCORE → BLOCK #2</text>
+  <text x="450" y="896" text-anchor="middle" class="label">function address · 0x8020f664</text>
+</svg>

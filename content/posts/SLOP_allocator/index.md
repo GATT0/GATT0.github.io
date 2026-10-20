@@ -1,5 +1,5 @@
 ---
-title: "SLOP Allocator: From a Broken Invariant to RCE"
+title: "SLOP Allocator: A kernel memory allocator"
 date: 2026-10-18
 draft: false
 tags: ["pwn", "heap", "Linux Kernel", "CTF"]
@@ -231,24 +231,10 @@ From there, the standard FSOP path reaches the function pointer stored at `C + 0
 system(" sh");
 ```
 
-That starts a shell, completing the chain:
-
-```text
-active page incorrectly added to ready
-    -> corrupted cache lists
-    -> stale reference to a released page
-    -> same page reused by two size caches
-    -> overlapping note and spaceship
-    -> arena and libc leak
-    -> allocation redirected to stdout
-    -> FSOP
-    -> RCE
-```
+That starts a shell, completing the exploitation.
 
 ## Conclusion
 
 The vulnerable line is small, but the underlying mistake is larger: SLOP infers a page's state from whether its freelist is empty. Those two facts are related, but they are not equivalent.
-
-An explicit state such as `ACTIVE`, `READY`, `FULL`, or `FREE` would make the invalid transition much harder to express. At minimum, the free path must distinguish a full active page from a page that is actually linked in the full list.
 
 This was exactly what I wanted from the challenge. The exploit does not begin with an application-level overflow; it begins by understanding an allocator invariant, breaking it, and following the consequences all the way from page ownership to code execution.

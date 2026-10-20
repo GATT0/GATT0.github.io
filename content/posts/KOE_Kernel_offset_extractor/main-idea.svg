@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 820" role="img" aria-labelledby="title desc">
+  <title id="title">KOE overview</title>
+  <desc id="desc">The stripped vendor kernel is disassembled and split into function-like blocks. A target function is extracted by name from a recompiled reference kernel. KOE compares the target with the blocks and returns the address of the lowest-scoring candidate.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:20px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:18px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:16px;fill:#cbd5e1}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2}
+      .vendor{fill:#164e63;stroke:#22d3ee;stroke-width:3}
+      .reference{fill:#064e3b;stroke:#34d399;stroke-width:3}
+      .stage{fill:#1e293b;stroke:#64748b;stroke-width:2}
+      .candidate{fill:#172033;stroke:#22d3ee;stroke-width:2}
+      .fingerprint{fill:#172033;stroke:#34d399;stroke-width:2}
+      .compare{fill:#422006;stroke:#fbbf24;stroke-width:3}
+      .result{fill:#4c1d3f;stroke:#fb7185;stroke-width:3}
+      .cyan{fill:#22d3ee}.green{fill:#34d399}.gold{fill:#fbbf24}.pink{fill:#fb7185}
+    </style>
+  </defs>
+
+  <rect width="900" height="820" rx="18" fill="#0f172a"/>
+  <text x="450" y="48" text-anchor="middle" class="title">KOE overview</text>
+
+  <!-- Stripped-kernel pipeline -->
+  <rect x="10" y="78" width="425" height="510" rx="14" class="panel"/>
+  <text x="222.5" y="116" text-anchor="middle" class="heading">STRIPPED VENDOR KERNEL</text>
+
+  <rect x="30" y="140" width="385" height="88" rx="10" class="vendor"/>
+  <text x="222.5" y="178" text-anchor="middle" class="label">vendor kernel</text>
+  <text x="222.5" y="207" text-anchor="middle" class="small">???????? · no symbols</text>
+
+  <rect x="220.5" y="228" width="4" height="35" class="cyan"/>
+  <polygon points="222.5,274 212.5,260 232.5,260" class="cyan"/>
+
+  <rect x="55" y="275" width="335" height="70" rx="10" class="stage"/>
+  <text x="222.5" y="317" text-anchor="middle" class="label">disassemble + split</text>
+
+  <rect x="220.5" y="345" width="4" height="35" class="cyan"/>
+  <polygon points="222.5,391 212.5,377 232.5,377" class="cyan"/>
+
+  <rect x="30" y="392" width="385" height="160" rx="10" class="vendor"/>
+  <text x="222.5" y="424" text-anchor="middle" class="label">function-like blocks</text>
+
+  <g transform="translate(47.5 444)">
+    <rect x="0" y="0" width="85" height="82" rx="7" class="candidate"/>
+    <text x="42.5" y="25" text-anchor="middle" class="small">block #1</text>
+    <rect x="14" y="38" width="57" height="7" rx="3" class="cyan"/>
+    <rect x="14" y="51" width="36" height="7" rx="3" class="cyan"/>
+    <rect x="14" y="64" width="48" height="7" rx="3" class="cyan"/>
+
+    <rect x="105" y="0" width="85" height="82" rx="7" class="candidate"/>
+    <text x="147.5" y="25" text-anchor="middle" class="small">block #2</text>
+    <rect x="119" y="38" width="40" height="7" rx="3" class="cyan"/>
+    <rect x="119" y="51" width="57" height="7" rx="3" class="cyan"/>
+    <rect x="119" y="64" width="29" height="7" rx="3" class="cyan"/>
+
+    <text x="227.5" y="50" text-anchor="middle" class="heading">···</text>
+
+    <rect x="265" y="0" width="85" height="82" rx="7" class="candidate"/>
+    <text x="307.5" y="25" text-anchor="middle" class="small">block #N</text>
+    <rect x="279" y="38" width="50" height="7" rx="3" class="cyan"/>
+    <rect x="279" y="51" width="32" height="7" rx="3" class="cyan"/>
+    <rect x="279" y="64" width="57" height="7" rx="3" class="cyan"/>
+  </g>
+
+  <!-- Reference-kernel pipeline -->
+  <rect x="465" y="78" width="425" height="510" rx="14" class="panel"/>
+  <text x="677.5" y="116" text-anchor="middle" class="heading">RECOMPILED REFERENCE KERNEL</text>
+
+  <rect x="485" y="140" width="385" height="88" rx="10" class="reference"/>
+  <text x="677.5" y="178" text-anchor="middle" class="label">reference kernel</text>
+  <text x="677.5" y="207" text-anchor="middle" class="small">read · recv · connect · ...</text>
+
+  <rect x="675.5" y="228" width="4" height="35" class="green"/>
+  <polygon points="677.5,274 667.5,260 687.5,260" class="green"/>
+
+  <rect x="510" y="275" width="335" height="70" rx="10" class="stage"/>
+  <text x="677.5" y="317" text-anchor="middle" class="label">extract named function</text>
+
+  <rect x="675.5" y="345" width="4" height="35" class="green"/>
+  <polygon points="677.5,391 667.5,377 687.5,377" class="green"/>
+
+  <rect x="485" y="392" width="385" height="160" rx="10" class="reference"/>
+  <text x="677.5" y="424" text-anchor="middle" class="label">target function</text>
+  <g transform="translate(510 443)">
+    <rect x="0" y="0" width="335" height="88" rx="7" class="fingerprint"/>
+    <rect x="20" y="15" width="245" height="7" rx="3" class="green"/>
+    <rect x="20" y="32" width="285" height="7" rx="3" class="green"/>
+    <rect x="20" y="49" width="205" height="7" rx="3" class="green"/>
+    <rect x="20" y="66" width="265" height="7" rx="3" class="green"/>
+  </g>
+
+  <!-- Both branches converge on the comparison. -->
+  <path d="M222.5 552 V615 H245" fill="none" stroke="#22d3ee" stroke-width="4"/>
+  <polygon points="260,615 244,605 244,625" class="cyan"/>
+  <path d="M677.5 552 V615 H655" fill="none" stroke="#34d399" stroke-width="4"/>
+  <polygon points="640,615 656,605 656,625" class="green"/>
+
+  <rect x="260" y="580" width="380" height="72" rx="12" class="compare"/>
+  <text x="450" y="610" text-anchor="middle" class="label">compare target against blocks</text>
+  <text x="450" y="636" text-anchor="middle" class="small">rank candidates by score</text>
+
+  <rect x="448" y="652" width="4" height="40" class="gold"/>
+  <polygon points="450,704 439,689 461,689" class="gold"/>
+
+  <rect x="200" y="705" width="500" height="100" rx="12" class="result"/>
+  <text x="450" y="746" text-anchor="middle" class="label">lowest score = best match</text>
+  <text x="450" y="779" text-anchor="middle" class="heading">function address · 0x8020f664</text>
+</svg>

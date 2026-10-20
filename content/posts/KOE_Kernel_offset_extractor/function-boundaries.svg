@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 725" role="img" aria-labelledby="title desc">
+  <title id="title">Function-like block boundaries</title>
+  <desc id="desc">A zoomed MIPS disassembly shows a function-like block beginning at a recognized stack-frame prologue and ending after its return and stack restoration. Instructions outside the recovered block are dimmed.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:20px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:18px;font-weight:700;fill:#f8fafc}
+      .code{font-family:monospace;font-size:18px;fill:#e2e8f0}
+      .address{font-family:monospace;font-size:16px;fill:#94a3b8}
+      .small{font-family:monospace;font-size:16px;fill:#cbd5e1}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2}
+      .context{fill:#172033;stroke:#334155;stroke-width:2}
+      .block{fill:#164e63;stroke:#22d3ee;stroke-width:3}
+      .row{fill:#1e293b;stroke:#475569;stroke-width:1.5}
+      .start{fill:#064e3b;stroke:#34d399;stroke-width:3}
+      .end{fill:#4c1d3f;stroke:#fb7185;stroke-width:3}
+      .gold{fill:#fbbf24}.green{fill:#34d399}.pink{fill:#fb7185}
+    </style>
+  </defs>
+
+  <rect width="900" height="725" rx="18" fill="#0f172a"/>
+  <text x="450" y="48" text-anchor="middle" class="title">Function-like block boundaries</text>
+
+  <rect x="10" y="78" width="880" height="635" rx="14" class="panel"/>
+
+  <!-- Instructions before the recovered block. -->
+  <rect x="130" y="105" width="640" height="55" rx="8" class="context" opacity=".62"/>
+  <text x="155" y="139" class="address">8020f65c</text>
+  <text x="335" y="139" class="code" opacity=".55">... previous instructions ...</text>
+
+  <!-- The recovered block. -->
+  <rect x="100" y="190" width="700" height="430" rx="12" class="block"/>
+  <text x="450" y="222" text-anchor="middle" class="heading">FUNCTION-LIKE BLOCK</text>
+
+  <g transform="translate(135 240)">
+    <rect x="0" y="0" width="630" height="38" rx="5" class="start"/>
+    <text x="25" y="25" class="address">8020f664</text><text x="165" y="25" class="code">addiu  sp, sp, -32</text>
+
+    <rect x="0" y="43" width="630" height="34" rx="5" class="row"/>
+    <text x="25" y="66" class="address">8020f668</text><text x="165" y="66" class="code">sw     ra, 28(sp)</text>
+
+    <rect x="0" y="82" width="630" height="34" rx="5" class="row"/>
+    <text x="25" y="105" class="address">8020f66c</text><text x="165" y="105" class="code">jal    8020f518</text>
+
+    <rect x="0" y="121" width="630" height="34" rx="5" class="row"/>
+    <text x="25" y="144" class="address">8020f670</text><text x="165" y="144" class="code">sw     a1, 16(sp)</text>
+
+    <rect x="0" y="160" width="630" height="34" rx="5" class="row"/>
+    <text x="25" y="183" class="address">8020f674</text><text x="165" y="183" class="code">lw     a1, 16(sp)</text>
+
+    <rect x="0" y="199" width="630" height="34" rx="5" class="row"/>
+    <text x="25" y="222" class="address">8020f678</text><text x="165" y="222" class="code">sw     v0, 384(a1)</text>
+
+    <rect x="0" y="238" width="630" height="34" rx="5" class="row"/>
+    <text x="25" y="261" class="address">8020f67c</text><text x="165" y="261" class="code">lw     ra, 28(sp)</text>
+
+    <rect x="0" y="277" width="630" height="34" rx="5" class="end"/>
+    <text x="25" y="300" class="address">8020f680</text><text x="165" y="300" class="code">jr     ra</text>
+
+    <rect x="0" y="316" width="630" height="38" rx="5" class="end"/>
+    <text x="25" y="341" class="address">8020f684</text><text x="165" y="341" class="code">addiu  sp, sp, 32</text>
+  </g>
+
+  <!-- Boundary labels point directly to the first and last rows. -->
+  <text x="20" y="253" class="label" fill="#34d399">START</text>
+  <text x="20" y="277" class="small">prologue</text>
+  <rect x="80" y="257" width="55" height="4" class="green"/>
+  <polygon points="135,259 115,248 115,270" class="green"/>
+
+  <text x="810" y="562" class="label" fill="#fb7185">END</text>
+  <text x="810" y="586" class="small">epilogue</text>
+  <rect x="765" y="566" width="25" height="4" class="pink"/>
+  <polygon points="765,568 785,557 785,579" class="pink"/>
+
+  <!-- Instructions after the recovered block. -->
+  <rect x="130" y="646" width="640" height="45" rx="8" class="context" opacity=".62"/>
+  <text x="155" y="675" class="address">8020f688</text>
+  <text x="335" y="675" class="code" opacity=".55">... next instructions ...</text>
+</svg>

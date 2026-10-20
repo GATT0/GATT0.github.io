@@ -3,7 +3,7 @@ title: "KOE: Kernel Offset Extractor"
 date: 2026-04-06
 draft: false
 tags: ["Linux Kernel", "Reverse Engineering", "Firmware"]
-summary: "How I locate functions inside stripped Linux kernels by comparing them with a recompiled reference kernel"
+summary: "How I locate functions inside stripped Linux kernels"
 ---
 
 ## Introduction
@@ -24,23 +24,7 @@ KOE uses a second kernel as a reference. I compile a kernel with a version and c
 
 The complete pipeline looks like this:
 
-```text
-Stripped vendor kernel                      Recompiled reference kernel
-        |                                               |
-        v                                               v
-Disassemble the entire image                Extract the named function
-        |                                               |
-        v                                               v
-Split it into candidate blocks              Build its instruction fingerprint
-        |                                               |
-        +--------------------+--------------------------+
-                             |
-                             v
-                  Compare all fingerprints
-                             |
-                             v
-             Return the lowest-scoring candidate
-```
+![KOE overview](main-idea.svg)
 
 KOE answers a narrower question: *which block in this stripped kernel most closely resembles this known function?*
 
@@ -76,31 +60,13 @@ def split_chunks(assembly, prologue_pattern):
 
 For example, one recovered block may look like this:
 
-```asm
-8020f664:  27bdffe0  addiu  sp,sp,-32
-8020f668:  afbf001c  sw     ra,28(sp)
-8020f66c:  0c083d46  jal    8020f518
-8020f670:  afa50010  sw     a1,16(sp)
-8020f674:  8fa50010  lw     a1,16(sp)
-8020f678:  aca20180  sw     v0,384(a1)
-8020f67c:  8fbf001c  lw     ra,28(sp)
-8020f680:  03e00008  jr     ra
-8020f684:  27bd0020  addiu  sp,sp,32
-```
+![Function-like block boundaries](function-boundaries.svg)
 
 ## Building a function fingerprint
 
 Comparing raw bytes would be too strict. Instead, KOE discards operands and counts instruction mnemonics. The block above becomes:
 
-```text
-{
-  addiu: 2,
-  sw:    3,
-  jal:   1,
-  lw:    2,
-  jr:    1
-}
-```
+![From a function-like block to its fingerprint](function-fingerprint.svg)
 
 The same transformation is applied to every candidate block in the stripped kernel and to the target function extracted from the recompiled kernel. Because the recompiled kernel contains symbols, its block can be obtained directly with a command such as:
 
@@ -118,22 +84,11 @@ Let `T` be the fingerprint of the reference function and `C` the fingerprint of 
 score(T, C) = sum(abs(T[opcode] - C[opcode]))
 ```
 
-Lower values indicate a closer match, a score of zero would indicate a perfect match.
+Lower values indicate a closer match, a score of zero would indicate a perfect match. KOE performs this comparison against every function-like block:
 
-Suppose the candidate and reference fingerprints are:
+![Comparing the target fingerprint with every candidate](scoring-candidates.svg)
 
-```text
-candidate = {addiu: 2, sw: 3, jal: 1, lw: 2, jr: 1}
-reference = {addiu: 2, sw: 3, jal: 1,        jr: 3, move: 1}
-```
-
-Their difference is:
-
-```text
-{addiu: 0, sw: 0, jal: 0, lw: 2, jr: 2, move: 1}
-```
-
-The final score is therefore `5`. KOE repeats this calculation for the thousands of blocks found in the stripped kernel, ranks them by score, and selects the closest candidate. The address of the first instruction in that block is the candidate function address.
+In this example, block `#2` has the lowest score, `5`, so it becomes the closest candidate. The address of its first instruction is the candidate function address.
 
 Once the kernel has been disassembled and fingerprinted, searching for another function only requires extracting one reference block and comparing small dictionaries.
 
