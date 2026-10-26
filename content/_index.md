@@ -1,5 +1,3 @@
-# whoami
-
 I'm Emanuele, also known as **GATT0** on GitHub and **Cats** in CTFs.
 
 I'm a cybersecurity researcher interested in binary exploitation, reverse
