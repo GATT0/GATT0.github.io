@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460" role="img" aria-labelledby="title desc">
+  <title id="title">Reading the two stable states of an EEPROM cell</title>
+  <desc id="desc">The same read voltage is applied to the control gate of an erased and a programmed cell. With less trapped charge the source-to-drain channel conducts and reads as one. With more trapped charge the channel remains closed and reads as zero.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:20px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:17px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:15px;fill:#cbd5e1}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2.5}
+      .card{fill:#172033;stroke:#64748b;stroke-width:2}
+      .gate{fill:#164e63;stroke:#22d3ee;stroke-width:2}
+      .floating{fill:#422006;stroke:#fbbf24;stroke-width:2}
+      .terminal{fill:#1e293b;stroke:#94a3b8;stroke-width:2}
+      .cyan{fill:#22d3ee}.pink{fill:#fb7185}.green{fill:#34d399}.gold{fill:#fbbf24}
+    </style>
+  </defs>
+
+  <rect width="900" height="460" rx="18" fill="#0f172a"/>
+  <text x="450" y="43" text-anchor="middle" class="title">Reading a stored bit</text>
+  <rect x="25" y="66" width="850" height="368" rx="14" class="panel"/>
+  <text x="450" y="99" text-anchor="middle" class="heading">SAME READ VOLTAGE</text>
+
+  <!-- Erased, stable state. -->
+  <rect x="45" y="116" width="390" height="290" rx="11" class="card"/>
+  <text x="240" y="150" text-anchor="middle" class="label" fill="#34d399">ERASED STATE · 1</text>
+
+  <text x="240" y="177" text-anchor="middle" class="small" fill="#22d3ee">READ VOLTAGE</text>
+  <rect x="238" y="184" width="4" height="17" fill="#22d3ee"/>
+  <polygon points="240,211 230,196 250,196" class="cyan"/>
+  <rect x="125" y="211" width="230" height="34" rx="5" class="gate"/>
+  <text x="240" y="233" text-anchor="middle" class="small">CONTROL GATE</text>
+
+  <rect x="155" y="263" width="170" height="40" rx="5" class="floating"/>
+  <circle cx="220" cy="283" r="4" class="gold"/><circle cx="260" cy="283" r="4" class="gold"/>
+  <text x="240" y="322" text-anchor="middle" class="small" fill="#fbbf24">floating gate · less charge</text>
+
+  <rect x="75" y="337" width="90" height="34" rx="5" class="terminal"/>
+  <rect x="315" y="337" width="90" height="34" rx="5" class="terminal"/>
+  <text x="120" y="359" text-anchor="middle" class="small">source</text>
+  <text x="360" y="359" text-anchor="middle" class="small">drain</text>
+  <rect x="165" y="351" width="130" height="6" fill="#34d399"/>
+  <polygon points="315,354 295,342 295,366" class="green"/>
+  <text x="240" y="394" text-anchor="middle" class="label" fill="#34d399">current flows</text>
+
+  <!-- Programmed, stable state. -->
+  <rect x="465" y="116" width="390" height="290" rx="11" class="card"/>
+  <text x="660" y="150" text-anchor="middle" class="label" fill="#fb7185">PROGRAMMED STATE · 0</text>
+
+  <text x="660" y="177" text-anchor="middle" class="small" fill="#22d3ee">READ VOLTAGE</text>
+  <rect x="658" y="184" width="4" height="17" fill="#22d3ee"/>
+  <polygon points="660,211 650,196 670,196" class="cyan"/>
+  <rect x="545" y="211" width="230" height="34" rx="5" class="gate"/>
+  <text x="660" y="233" text-anchor="middle" class="small">CONTROL GATE</text>
+
+  <rect x="575" y="263" width="170" height="40" rx="5" class="floating"/>
+  <g fill="#fbbf24">
+    <circle cx="594" cy="275" r="4"/><circle cx="619" cy="291" r="4"/><circle cx="644" cy="275" r="4"/>
+    <circle cx="669" cy="291" r="4"/><circle cx="694" cy="275" r="4"/><circle cx="719" cy="291" r="4"/>
+  </g>
+  <text x="660" y="322" text-anchor="middle" class="small" fill="#fbbf24">floating gate · more charge</text>
+
+  <rect x="495" y="337" width="90" height="34" rx="5" class="terminal"/>
+  <rect x="735" y="337" width="90" height="34" rx="5" class="terminal"/>
+  <text x="540" y="359" text-anchor="middle" class="small">source</text>
+  <text x="780" y="359" text-anchor="middle" class="small">drain</text>
+  <rect x="585" y="351" width="60" height="6" fill="#64748b"/>
+  <rect x="675" y="351" width="60" height="6" fill="#64748b"/>
+  <path d="M650 344 L670 364 M670 344 L650 364" fill="none" stroke="#fb7185" stroke-width="4"/>
+  <text x="660" y="394" text-anchor="middle" class="label" fill="#fb7185">no current</text>
+</svg>

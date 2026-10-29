@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+  <title id="title">From memory blocks to bits</title>
+  <desc id="desc">The ST25TB04K logical memory map. One 32-bit block is expanded into its 32 individual bits without making assumptions about the undocumented physical layout.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:20px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:17px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:15px;fill:#cbd5e1}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2.5}
+      .otp{fill:#164e63;stroke:#22d3ee;stroke-width:2}
+      .counter{fill:#422006;stroke:#fbbf24;stroke-width:2}
+      .memory{fill:#3f1834;stroke:#fb7185;stroke-width:2}
+      .system{fill:#172033;stroke:#94a3b8;stroke-width:2}
+      .cell{fill:#164e63;stroke:#22d3ee;stroke-width:1.5}
+      .selected{fill:#422006;stroke:#fbbf24;stroke-width:2}
+      .cyan{fill:#22d3ee}
+    </style>
+  </defs>
+
+  <rect width="900" height="560" rx="18" fill="#0f172a"/>
+  <text x="450" y="45" text-anchor="middle" class="title">From blocks to bits</text>
+
+  <!-- Only the logical organization documented by ST. -->
+  <rect x="25" y="70" width="850" height="275" rx="14" class="panel"/>
+  <text x="55" y="104" class="heading">LOGICAL VIEW</text>
+  <text x="845" y="104" text-anchor="end" class="small">1 block = 32 bits</text>
+
+  <rect x="55" y="125" width="790" height="30" rx="6" class="otp"/>
+  <text x="75" y="146" class="label">0–4</text><text x="210" y="146" class="small">resettable OTP</text>
+
+  <rect x="55" y="164" width="790" height="30" rx="6" class="counter"/>
+  <text x="75" y="185" class="label">5–6</text><text x="210" y="185" class="small">protected counters</text>
+
+  <rect x="55" y="203" width="790" height="30" rx="6" class="memory"/>
+  <text x="75" y="224" class="label">7–15</text><text x="210" y="224" class="small">lockable user memory</text>
+
+  <rect x="55" y="242" width="790" height="30" rx="6" class="memory"/>
+  <text x="75" y="263" class="label">16–127</text><text x="210" y="263" class="small">user memory</text>
+
+  <rect x="55" y="281" width="385" height="30" rx="6" class="system"/>
+  <text x="75" y="302" class="label">255</text><text x="210" y="302" class="small">system OTP</text>
+  <rect x="460" y="281" width="385" height="30" rx="6" class="system"/>
+  <text x="480" y="302" class="label">UID</text><text x="600" y="302" class="small">separate ROM</text>
+
+  <rect x="448" y="345" width="4" height="33" fill="#22d3ee"/>
+  <polygon points="450,393 438,375 462,375" class="cyan"/>
+
+  <!-- A conceptual expansion, not a claim about the die layout. -->
+  <rect x="25" y="395" width="850" height="140" rx="14" class="panel"/>
+  <text x="55" y="429" class="heading">ONE 32-BIT BLOCK</text>
+  <text x="845" y="429" text-anchor="end" class="small">4 bytes · 32 bits</text>
+
+  <g transform="translate(55 455)">
+    <rect x="0" y="0" width="19" height="30" rx="3" class="cell"/><rect x="24" y="0" width="19" height="30" rx="3" class="cell"/><rect x="48" y="0" width="19" height="30" rx="3" class="cell"/><rect x="72" y="0" width="19" height="30" rx="3" class="cell"/><rect x="96" y="0" width="19" height="30" rx="3" class="cell"/><rect x="120" y="0" width="19" height="30" rx="3" class="cell"/><rect x="144" y="0" width="19" height="30" rx="3" class="cell"/><rect x="168" y="0" width="19" height="30" rx="3" class="cell"/>
+  </g>
+  <g transform="translate(254 455)">
+    <rect x="0" y="0" width="19" height="30" rx="3" class="cell"/><rect x="24" y="0" width="19" height="30" rx="3" class="cell"/><rect x="48" y="0" width="19" height="30" rx="3" class="cell"/><rect x="72" y="0" width="19" height="30" rx="3" class="cell"/><rect x="96" y="0" width="19" height="30" rx="3" class="cell"/><rect x="120" y="0" width="19" height="30" rx="3" class="cell"/><rect x="144" y="0" width="19" height="30" rx="3" class="cell"/><rect x="168" y="0" width="19" height="30" rx="3" class="selected"/>
+  </g>
+  <g transform="translate(453 455)">
+    <rect x="0" y="0" width="19" height="30" rx="3" class="cell"/><rect x="24" y="0" width="19" height="30" rx="3" class="cell"/><rect x="48" y="0" width="19" height="30" rx="3" class="cell"/><rect x="72" y="0" width="19" height="30" rx="3" class="cell"/><rect x="96" y="0" width="19" height="30" rx="3" class="cell"/><rect x="120" y="0" width="19" height="30" rx="3" class="cell"/><rect x="144" y="0" width="19" height="30" rx="3" class="cell"/><rect x="168" y="0" width="19" height="30" rx="3" class="cell"/>
+  </g>
+  <g transform="translate(652 455)">
+    <rect x="0" y="0" width="19" height="30" rx="3" class="cell"/><rect x="24" y="0" width="19" height="30" rx="3" class="cell"/><rect x="48" y="0" width="19" height="30" rx="3" class="cell"/><rect x="72" y="0" width="19" height="30" rx="3" class="cell"/><rect x="96" y="0" width="19" height="30" rx="3" class="cell"/><rect x="120" y="0" width="19" height="30" rx="3" class="cell"/><rect x="144" y="0" width="19" height="30" rx="3" class="cell"/><rect x="168" y="0" width="19" height="30" rx="3" class="cell"/>
+  </g>
+
+  <text x="55" y="511" class="small">bit 31</text>
+  <text x="432" y="511" text-anchor="middle" class="small" fill="#fbbf24">one cell = one bit</text>
+  <text x="842" y="511" text-anchor="end" class="small">bit 0</text>
+</svg>

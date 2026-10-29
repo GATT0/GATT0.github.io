@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 220" role="img" aria-labelledby="title desc">
+  <title id="title">Reader and passive tag</title>
+  <desc id="desc">A Flipper Zero reader and a passive ST25TB04K tag are shown as black boxes. Three wireless waves connect them. Power and requests travel from the reader to the tag, while replies travel from the tag back to the reader.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:21px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:18px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:16px;fill:#cbd5e1}
+      .reader{fill:#164e63;stroke:#22d3ee;stroke-width:3}
+      .tag{fill:#422006;stroke:#fbbf24;stroke-width:3}
+      .cyan{fill:#22d3ee}.pink{fill:#fb7185}
+    </style>
+  </defs>
+
+  <rect width="820" height="220" rx="18" fill="#0f172a"/>
+  <text x="410" y="38" text-anchor="middle" class="title">Reader and passive tag</text>
+
+  <rect x="45" y="70" width="210" height="115" rx="12" class="reader"/>
+  <text x="150" y="109" text-anchor="middle" class="heading">READER</text>
+  <text x="150" y="153" text-anchor="middle" class="label">FLIPPER ZERO</text>
+
+  <rect x="565" y="70" width="210" height="115" rx="12" class="tag"/>
+  <text x="670" y="109" text-anchor="middle" class="heading">PASSIVE TAG</text>
+  <text x="670" y="153" text-anchor="middle" class="label">ST25TB04K</text>
+
+  <!-- Three vertical arcs show horizontal wireless propagation. -->
+  <path d="M350 113 C375 122 375 142 350 151" fill="none" stroke="#fbbf24" stroke-width="4" stroke-opacity=".25"/>
+  <path d="M390 104 C430 119 430 146 390 161" fill="none" stroke="#fbbf24" stroke-width="4" stroke-opacity=".35"/>
+  <path d="M430 95 C480 114 480 151 430 170" fill="none" stroke="#fbbf24" stroke-width="4" stroke-opacity=".48"/>
+
+  <text x="410" y="79" text-anchor="middle" class="small" fill="#22d3ee">power + request</text>
+  <rect x="275" y="94" width="245" height="4" fill="#22d3ee"/>
+  <polygon points="540,96 520,84 520,108" class="cyan"/>
+
+  <rect x="300" y="166" width="240" height="4" fill="#fb7185"/>
+  <polygon points="280,168 300,156 300,180" class="pink"/>
+  <text x="410" y="198" text-anchor="middle" class="small" fill="#fb7185">reply</text>
+</svg>

@@ -1,34 +1,36 @@
 ---
-title: "ST25TB Writer for Flipper Zero"
+title: "ST25TB Tear-Off: Breaking Monotonic Counters with a Flipper Zero"
 date: 2026-04-06
-draft: true
+draft: false
 tags: ["flipper-zero", "nfc", "st25tb"]
-summary: "Building a Flipper Zero application to read, edit, and write ST25TB tags directly on the device"
+summary: "From building a simple tag writer to reproducing a tear-off attack through EEPROM weak bits and precisely timed RF power cuts"
 ---
 
 ## Introduction
 
-After getting a Flipper Zero, I started experimenting with the NFC (Near Field Communication) tags I had around. Most of them could be read and written using the tools already available, but one family behaved differently: ST25TB. The official NFC application could identify the tag, read its memory, and save it to an `.nfc` file, but it did not offer a way to write that data back.
+After getting a Flipper Zero, I started experimenting with the NFC (Near Field Communication) tags I had around. Most of them could already be read and written using the available tools, but one family behaved differently: ST25TB. The official NFC application could identify the tag, read its memory, and save it to an `.nfc` file, but it did not offer a way to write that data back. What began as an attempt to fill that small gap eventually became an investigation into the hardware protections of the tag itself.
 
-While researching the protocol, I found Marco Zoratti's article, [*Reverse Engineering: How I hacked vending machines keys with Flipper Zero*](https://marco-zora.medium.com/how-i-hacked-nfc-st25tb-keys-with-flipper-zero-d1a3b1833cf2). His analysis of ST25TB tags and of the information exposed by the Flipper firmware was a useful starting point for this project. His work focuses on understanding a specific vending-machine key; my goal was narrower: build a small, reusable tool for reading, editing, and writing ST25TB memory directly from the Flipper.
+While researching the protocol, I found Marco Zoratti's article, [*Reverse Engineering: How I hacked vending machines keys with Flipper Zero*](https://marco-zora.medium.com/how-i-hacked-nfc-st25tb-keys-with-flipper-zero-d1a3b1833cf2). His analysis of ST25TB tags and of the information exposed by the Flipper firmware was a useful starting point. I first built a small application for reading, editing, and writing their memory directly from the Flipper. That worked for ordinary blocks, but it also exposed the more interesting boundary of the system: blocks 5 and 6 are monotonic counters that accept only lower values.
 
-At the time I created the application, I could not find a ready-to-use, publicly available Flipper Zero application that did this. The firmware contained the protocol support required to read and write individual blocks, but there was no user-facing workflow for restoring data from a dump. That missing piece became the reason for building **ST25TB Writer**.
+At first, I treated that restriction as an absolute hardware rule. Discovering the public research on ST25TB tear-off attacks changed the direction of the project. The question was no longer simply how to send a write command, but how a precisely timed loss of RF power could interrupt an EEPROM operation, create an unstable bit, and ultimately make a decrement-only counter increase.
 
-> This project is intended for tags you own or are explicitly authorized to test. Writing arbitrary data to access, ticketing, or payment systems can damage the tag and may be illegal.
+Answering that question required moving through every layer of the tag: how it receives power, how its EEPROM cells store charge, how its two-copy counter protects interrupted writes, and finally how the Flipper can search for the tear-off time `t`. This post follows that journey, from the first writer to a working experimental implementation of the attack.
+
+> The experiments described here are intended only for tags you own or are explicitly authorized to test. Counter writes are irreversible, tear-off can corrupt the tag, and modifying access, ticketing, or payment systems may be illegal.
 
 ## Inside an ST25TB tag
 
-Before writing a single byte, I wanted to understand what I was actually holding. ST25TB is a family of contactless memory tags from STMicroelectronics that run at 13.56 MHz over the ISO (International Organization for Standardization) 14443 Type B interface with a small proprietary command set. The interesting part is not the protocol, though — it is that the tag is *passive*: it only exists, electrically, while a reader is powering it. Almost everything surprising about these tags, including the attack later in this post, follows from that one fact, so it is worth looking at the hardware first.
+Before writing a single byte, I wanted to understand what I was actually holding. ST25TB is a family of contactless memory tags from STMicroelectronics that run at 13.56 MHz over the ISO (International Organization for Standardization) 14443 Type B interface with a small proprietary command set. The interesting part, however, is not the protocol itself, but the fact that the tag is *passive*: it only exists, electrically, while a reader is powering it. Almost everything surprising about these tags, including the attack later in this post, follows from that one fact, so it is worth looking at the hardware first.
 
 ### The radio-frequency field is both power and communication
 
 ![A Flipper Zero reader and a passive ST25TB04K tag communicating wirelessly: power and requests travel toward the tag, while replies travel back to the reader.](tag-overview.svg)
 
-An ST25TB tag has no battery or other independent power source. The reader — here, the Flipper Zero — generates a 13.56 MHz field. When the tag enters that field, it receives the energy needed to operate and can communicate with the reader. Energy travels from the reader to the tag, while information travels in both directions.
+An ST25TB tag has no battery or other independent power source. The reader (the Flipper Zero here) generates a 13.56 MHz field. When the tag enters that field, it receives the energy needed to operate and can communicate with the reader. Energy travels from the reader to the tag, while information travels in both directions.
 
 The reader sends commands by modulating the field. The tag replies without generating a carrier of its own: it changes the electrical load on its antenna, and the reader detects that variation through inductive coupling.
 
-The first diagram deliberately treats the tag as a black box. Opening that box gives the main components documented in the [ST25TB04K datasheet](https://www.st.com/resource/en/datasheet/st25tb04k.pdf):
+The [ST25TB04K datasheet](https://www.st.com/resource/en/datasheet/st25tb04k.pdf) lets us identify the main components inside the tag:
 
 ![The main components inside an ST25TB04K: antenna, power supply, ASK demodulator, digital control, EEPROM, and BPSK load modulator.](tag-internals.svg)
 
@@ -43,47 +45,113 @@ Each component has one job:
 
 The two blocks that matter most for the rest of the post are the digital control, where a request becomes a memory operation, and the EEPROM, where that operation physically takes place. We will expand both of them later.
 
-The important consequence is that communication and power are not independent. Turning off the reader's field also cuts the tag's power. Once the internal voltage drops too far, the logic and any ongoing EEPROM programming stop. That is the mechanism we will use later in the tear-off experiment.
-
 ### Opening the EEPROM
 
 ![The logical ST25TB04K memory map, with one 32-bit block expanded into its 32 individual bits.](memory-map.svg)
 
 From the protocol's point of view, the EEPROM is a flat array of 32-bit blocks: every `Read_block` or `Write_block` command moves exactly four bytes. The ST25TB04K has 4 Kbit of user EEPROM, giving 128 addressable blocks. Their behavior is not uniform:
 
-- **Blocks 0–4** — a resettable OTP (One-Time Programmable) area. Individual bits can move from 1 to 0, while a dedicated command resets the entire area to 1.
-- **Blocks 5 and 6** — two 32-bit counters that behave unlike anything else on the tag.
-- **Blocks 7–15** — user memory that can be permanently locked through the system area.
-- **Blocks 16–127** — ordinary user memory.
-- **Block 255** — the system area containing OTP and lock bits.
+- **Blocks 0–4**: a resettable OTP (One-Time Programmable) area. Individual bits can move from 1 to 0, while a dedicated command resets the entire area to 1.
+- **Blocks 5 and 6**: two 32-bit counters that behave unlike anything else on the tag.
+- **Blocks 7–15**: user memory that can be permanently locked through the system area.
+- **Blocks 16–127**: ordinary user memory.
+- **Block 255**: the system area containing OTP and lock bits.
 
 The 64-bit UID (Unique Identifier) is different: it is factory-programmed in a separate ROM (Read-Only Memory), returned by `Get_UID`, and is not part of this EEPROM array.
 
-Each block contains 32 bits, and each bit ultimately corresponds to a memory cell. The lower part of the diagram stops there deliberately: the datasheet specifies the logical organization and the behavior of the commands, but not the internal architecture or the physical arrangement of those cells.
+A `Read_block` returns the four bytes stored at the requested address. For blocks 7–127, a `Write_block` starts a self-timed programming cycle that includes an automatic erase before the new value is written. According to the [ST25TB04K datasheet](https://www.st.com/resource/en/datasheet/st25tb04k.pdf), this takes about 5 ms under typical conditions.
 
-A `Read_block` returns the four bytes stored at the requested address. For blocks 7–127, a `Write_block` starts a self-timed programming cycle that includes an automatic erase before the new value is written. According to the [ST25TB04K datasheet](https://www.st.com/resource/en/datasheet/st25tb04k.pdf), this takes about 5 ms under typical conditions. That documented sequence is all we need before looking at what happens to a single bit during a write.
-
-Blocks 5 and 6 are the exception. The hardware accepts a new counter value only if it is **lower** than the current one: they are **decrement-only**, meant for values that must never increase. They also have extra anti-tearing logic to preserve a valid value if power disappears during an update. A normal writer therefore cannot increment them. Why that guarantee can be disturbed is a question about the cells themselves.
+Blocks 5 and 6 are the exception. The hardware accepts a new counter value only if it is **lower** than the current one: they are **decrement-only**, meant for values that must never increase. They also have extra anti-tearing logic to preserve a valid value if power disappears during an update. A normal writer therefore cannot increment them.
 
 ### One bit is stored as charge
 
-![A conceptual floating-gate EEPROM cell and its read threshold: an erased cell has a low threshold and reads as 1, a programmed cell has a high threshold and reads as 0, while an interrupted operation can leave a weak bit close to the reference.](eeprom-cell.svg)
+The ST25TB04K datasheet does not reveal the chip's memory process or transistor-level layout. The following explanation therefore uses the conventional floating-gate EEPROM model to explain the observed behavior.
 
-The ST25TB04K datasheet does not reveal the chip's memory process or transistor-level layout. The following explanation therefore uses the conventional floating-gate EEPROM model to explain the observed behavior; the drawing is conceptual, not a reconstruction of the ST25TB04K die.
+In that model, a cell is a floating-gate MOS (Metal-Oxide-Semiconductor) transistor. The **floating gate** is the insulated part that stores the bit as trapped charge. The **control gate** does not store anything: it is the electrode to which the chip applies a voltage when it wants to access the cell.
 
-In that model, a cell is a floating-gate MOS (Metal-Oxide-Semiconductor) transistor. In addition to the control gate used to access it, it contains a second gate completely surrounded by insulating oxide. Electrons trapped on this **floating gate** cannot easily escape when power is removed, which is why the tag remembers its contents while lying unpowered in a wallet.
+![The two stable states of a floating-gate cell under the same read voltage: the erased state conducts and reads as 1, while the programmed state does not conduct and reads as 0.](eeprom-cell.svg)
 
-The stored charge changes the transistor's threshold voltage, usually written as Vₜ. Reading a cell does not measure the electrons directly. The circuit applies a known voltage to the control gate and observes whether current can flow through the channel between source and drain. The sense amplifier compares that response with a reference and emits a digital bit:
+During a read, the chip applies the same known voltage to the control gate in both cases. The charge trapped on the floating gate changes how much control-gate voltage is required to open a conductive channel between source and drain. With less trapped charge, the read voltage is sufficient and current flows: the erased cell is interpreted as **1**. With more trapped charge, the required voltage is higher, the channel stays closed, and the programmed cell is interpreted as **0**.
 
-- An **erased** cell has a lower Vₜ, conducts under the read condition, and is interpreted as **1**.
-- A **programmed** cell contains additional trapped electrons. Its Vₜ is higher, so it does not conduct under the same condition and is interpreted as **0**.
+The stored charge therefore does not travel from source to drain. It changes the condition under which that separate channel can conduct.
 
-Erase and program operations move charge gradually rather than instantaneously. Cutting power during the process can leave the cell close to the read reference instead of safely on either side. The result is a **weak bit**: a cell whose physical state is neither a robust 0 nor a robust 1 and whose observed value may change with coupling distance, supply voltage, temperature, or the characteristics of that particular cell.
+![The internal write circuitry creates an electric field across the oxide: a program pulse moves electrons from the silicon into the floating gate, while an erase pulse moves them back out.](eeprom-programming.svg)
 
-This erase-then-program sequence and its intermediate states are described in more detail in the research paper [*Tears for Fears, Breaking an RFID Counter*](https://www.sstic.org/media/SSTIC2024/SSTIC-actes/tears_for_fears_breaking_an_rfid_counter/SSTIC2024-Article-tears_for_fears_breaking_an_rfid_counter-marty_granier_delion_JHhE6Td.pdf). Under normal use these states remain invisible because the operation is allowed to finish and the counters' anti-tearing logic keeps exposing a valid value. A cell, however, cannot distinguish an accidental loss of power from a field deliberately removed at a precise instant.
+Changing the stored bit means changing that trapped charge. The chip's internal write circuitry applies a voltage pulse that creates a strong electric field across the insulating oxide. The direction of that field determines the operation: during **programming**, electrons move from the silicon, through the oxide, and into the floating gate; during **erase**, the field is reversed and electrons move from the floating gate back toward the silicon. The exact voltages and internal circuit are not documented for the ST25TB04K, but this is the conventional EEPROM model represented above.
 
-Three facts now sit together: the field is the tag's only power source, the counters are protected decrement-only blocks, and the cells beneath them are analog things that can be caught mid-change. That combination is enough to suspect the counters are not as one-way as they look — which is exactly what the tear-off attack exploits.
+### Opening the digital control
 
+The frame parsing described earlier is only the entry point. For the rest of this post, the interesting part of the digital control is the rule it applies after decoding a `Read_block` or `Write_block` request for blocks 5 and 6.
+
+Blocks 5 and 6 are the two independent counters exposed by the protocol. Internally, however, **each** logical counter is backed by two 32-bit sub-counters, usually called `CNTA` and `CNTB`. This organization is not described in the datasheet: it was reconstructed from experiments and from a related STMicroelectronics patent.
+
+![A logical counter block contains CNTA and CNTB. Reads return the smaller value, while each valid decrement overwrites whichever copy currently contains the larger value.](counter-copies.svg)
+
+A read returns the smaller of `CNTA` and `CNTB`. For a write, the digital control first checks that the requested value is strictly lower than **both** copies. If it is not, the request is rejected and no EEPROM update begins. If it is valid, the copy containing the larger value is selected and overwritten. In the example, writing 98 replaces `CNTA`, which held 100; writing 97 next replaces `CNTB`, which still held 99. The two copies therefore take turns moving downward.
+
+This is the counter's anti-tearing mechanism. During a normal decrement, only the larger copy is being changed, while the smaller one still contains the value currently returned by a read. If power disappears before the update completes, that untouched copy prevents an accidentally interrupted operation from becoming an increase.
+
+The distinction between validation and update is essential for the attack. We do not send an illegal increment: we send a value that passes the comparison, let the digital control select one sub-counter and begin its EEPROM update, and then interrupt that physical operation.
+
+## Tear-off: stopping between 0 and 1
+
+The research that motivated this second stage was [*Tears for Fears, Breaking an RFID Counter*](https://www.sstic.org/media/SSTIC2024/SSTIC-actes/tears_for_fears_breaking_an_rfid_counter/SSTIC2024-Article-tears_for_fears_breaking_an_rfid_counter-marty_granier_delion_JHhE6Td.pdf), together with its accompanying [Flipper Zero implementation](https://github.com/SecLabz/flipper-zero-st25-lab). The first intuition behind the attack comes directly from the physical behavior of EEPROM.
+
+The charge stored on a cell's floating gate determines its threshold voltage, Vₜ. During a read, the controller applies a fixed voltage to the control gate and observes whether the channel conducts. The height of each colored rectangle below represents the cell's Vₜ, while the horizontal line represents that fixed read voltage.
+
+![The amount of trapped charge raises or lowers the cell's threshold voltage: erased and programmed states sit safely on opposite sides of the fixed read voltage, while an interrupted operation may stop close to it.](eeprom-threshold.svg)
+
+After a normal erase or program operation, the cell finishes safely on one side of the read voltage. An erased cell has a lower Vₜ, so the applied voltage opens the channel and the cell reads as **1**. A programmed cell has a higher Vₜ, so the same voltage cannot open the channel and the cell reads as **0**. The transition between those states, however, is gradual: charge must physically enter or leave the floating gate, and that takes time.
+
+Before looking at the interruption, it is important to understand the order of a normal block write. For the ordinary EEPROM area, `Write_block` does not directly change only the bits that differ. It first runs an **erase phase**, bringing all 32 cells in the selected block to their erased state, logical **1**. It then runs a **program phase**, adding charge back only to the cells that must store logical **0**. Bits whose final value is 1 are simply left erased.
+
+![A normal block write completes the erase phase first, bringing every cell to 1, and then programs only the cells whose final value must be 0.](normal-block-write.svg)
+
+The following graph tracks a single cell whose final value must be **0** through both phases.
+
+![The erase phase completes normally, but the RF field is removed shortly after programming begins, leaving the cell with an intermediate charge.](tearoff-program-cut.svg)
+
+The erase phase is allowed to finish completely: the trapped charge falls until the cell reaches the erased state and reads as **1**. The program phase then starts adding charge back to the floating gate. We cut the RF field shortly after this second phase begins, while the cell still reads as **1**.
+
+This is where the passive nature of the tag becomes important. Its power comes from the reader's RF field, so disabling the field while an EEPROM operation is still running also removes the power needed to complete it. If the interruption happens at the right instant, the cell can be left close to the threshold instead of reaching either stable state.
+
+The result is a **weak bit**. Its charge level is real and persistent, but it does not express a robust logical value. Small changes in coupling distance, field strength, supply voltage, temperature, or the characteristics of that individual cell may therefore make the same physical bit read first as 0 and then as 1. A tear-off attack begins by deliberately creating this normally invisible intermediate state.
+
+### From a weak bit to a counter jump
+
+The weak bit created above gives us a way to disturb this comparison. If a high-order bit in one sub-counter can be made to read differently under different conditions, the apparent relationship between `CNTA` and `CNTB` changes. A successful tear may consequently expose a value higher than the current counter, but that value is not stable yet: the two copies still disagree. The algorithm must first find the narrow interruption window that creates this state and then consolidate the result with complete writes so that both sub-counters move to the new range.
+
+### Searching for the right `t`
+
+Let `t` be the time between the beginning of a `Write_block` transmission and the instant at which the RF field is switched off. There is no single value of `t` that works for every attempt: the useful window depends on the tag, the cells being changed and the coupling with the reader. Instead of relying on one magic value, we have to search for that window and continuously adapt `t` from the result of the previous write.
+
+![Each attempt writes a valid decrement, waits for t, cuts the RF field and reads the counter back. The observed value determines the next t or whether the jump must be consolidated.](tearoff-algorithm.svg)
+
+- **Craft decrement:** the application reads the counter and constructs a value that the tag is allowed to accept. It must be lower than the current value, otherwise the counter logic would reject it before any EEPROM operation began. Rather than simply subtracting one, the application chooses a bit pattern that makes the write touch useful high-order cells, giving the interrupted program phase a chance to leave one of them erased or weak.
+
+- **Write, wait `t`:** the application sends the `Write_block` command and waits exactly `t`.
+
+- **RF off:** once `t` has elapsed, the Flipper disables its RF field. This interrupts the EEPROM operation and powers the tag down. The field is then restored and the tag is selected again from a clean state.
+
+- **Read back:** the same block is read again and the result determines what happens next:
+  - If the value is **unchanged**, the field was removed before the write had a visible effect, so the next attempt slightly increases `t`.
+  - If the value is **lower**, the write has started taking effect or has completed normally, so `t` is reduced toward the beginning of the useful window.
+  - If the value is **higher**, the tear has produced the jump we were looking for. The value may still depend on a weak bit and on the disagreement between `CNTA` and `CNTB`, so it cannot yet be treated as permanent.
+
+- **Adapt `t`:** these results create a small feedback loop. The application slowly increases `t` while nothing happens, then reduces it as soon as the tag begins to change. In this way, `t` remains close to the boundary between "too early" and "already written", even when that boundary shifts slightly between attempts.
+
+- **Consolidate:** when a higher value appears, the application performs two complete, uninterrupted decrements from it. The first updates one internal sub-counter and the second updates the other. Once both copies have moved into the higher range, their minimum is higher too. A final power cycle and read confirm that the result survives without depending on the weak state. If it is still not above the value from which the experiment started, the same loop continues from this new baseline: each successful consolidation acts like another step of a ratchet.
+
+## Conclusion
+
+What started as a missing write button became a much deeper exploration of the tag. Building the first writer required understanding the ST25TB memory map and its special counter blocks; trying to overcome their restrictions then required going one level lower, from protocol commands to EEPROM cells, trapped charge and the RF field that powers the entire operation.
+
+The tear-off attack is a good example of why that lower level matters. From the protocol's point of view, blocks 5 and 6 are decrement-only. Physically, however, their values are stored in analog cells and protected by two sub-counters whose updates still need time and power to complete. By cutting that power at the right `t`, observing the result and adapting the next attempt, the application can turn an intermediate electrical state into a stable counter increase.
+
+The most interesting part of this project was therefore not the final write itself, but the path from an apparently absolute rule to the physical assumptions beneath it. A passive tag cannot distinguish an accidental loss of power from a carefully timed one, and a digital bit is only the interpretation of an analog state. Once those two ideas came together, the behavior of the attack, and the algorithm needed to reproduce it, became much easier to understand.
+
+
+<!--
 ## Building the writer
 
 The application is built with the official Flipper Zero firmware toolchain and uses the NFC implementation already present in the firmware. This keeps the application focused on the missing workflow rather than reimplementing the RF protocol itself.
@@ -96,17 +164,17 @@ From the user's point of view, the process is straightforward:
 4. Select `OK` when the changes are complete and confirm that they should be written.
 5. Place the destination tag on the back of the Flipper while the application writes and verifies only the modified blocks.
 
-<!-- TODO: capture on the Flipper. -->
-<!-- ![Choosing between a live tag and a saved capture](choose-source.png) -->
+TODO: capture on the Flipper.
+![Choosing between a live tag and a saved capture](choose-source.png)
 
-<!-- TODO: capture on the Flipper. -->
-<!-- ![Browsing ST25TB information and memory blocks](block-editor.png) -->
+TODO: capture on the Flipper.
+![Browsing ST25TB information and memory blocks](block-editor.png)
 
-<!-- TODO: capture on the Flipper. -->
-<!-- ![Editing the four bytes of a selected block](byte-editor.png) -->
+TODO: capture on the Flipper.
+![Editing the four bytes of a selected block](byte-editor.png)
 
-<!-- TODO: capture on the Flipper. -->
-<!-- ![Writing and verifying the modified blocks](writing-progress.png) -->
+TODO: capture on the Flipper.
+![Writing and verifying the modified blocks](writing-progress.png)
 
 ### What happens internally
 
@@ -140,9 +208,4 @@ The [source code and build manifest](https://github.com/GATT0/ST25TB-Flipper-Wri
 Edits currently live only in memory. Opening a saved capture provides its initial values, but the application does not overwrite or create an updated `.nfc` file. The edited data can be written to a physical tag, then read again with the standard NFC application if a new capture is needed.
 
 The editor covers the normal addressable blocks, including the two counters, but deliberately leaves the UID and system OTP block read-only. It also cannot determine that an apparently writable value will be accepted in every case: OTP transitions, lock bits, and counter rules are enforced by the tag itself. Read-back verification is therefore the final authority on whether a change succeeded.
-
-## Conclusion
-
-ST25TB support was already present in the Flipper Zero firmware, but only part of it was exposed through the standard user interface. Building this application was mostly about connecting the existing file parser, NFC poller, and GUI (Graphical User Interface) into a safe and understandable write workflow.
-
-The result is intentionally small: read a tag or open a previous capture, inspect its complete memory, edit individual bytes, and let the Flipper write and verify only what changed. It does not defeat the hardware protections of ST25TB tags, but it fills the practical gap that originally prevented me from modifying and writing my own tags without preparing a new dump elsewhere.
+-->

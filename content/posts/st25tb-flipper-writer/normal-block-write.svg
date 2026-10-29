@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 230" role="img" aria-labelledby="title desc">
+  <title id="title">A normal EEPROM block write</title>
+  <desc id="desc">A normal block write first erases every cell to logical one, then programs only the cells whose final value must be zero.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:17px;font-weight:700;fill:#f8fafc}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2.5}
+      .one{fill:#064e3b;stroke:#34d399;stroke-width:2}
+      .zero{fill:#4c1d3f;stroke:#fb7185;stroke-width:2}
+      .gold{fill:#fbbf24}
+    </style>
+  </defs>
+
+  <rect width="900" height="230" rx="18" fill="#0f172a"/>
+  <text x="450" y="43" text-anchor="middle" class="title">A normal block write</text>
+  <rect x="25" y="66" width="850" height="138" rx="14" class="panel"/>
+
+  <text x="235" y="103" text-anchor="middle" class="label" fill="#22d3ee">1. ERASE ALL CELLS</text>
+  <g transform="translate(115 120)">
+    <rect x="0" y="0" width="52" height="52" rx="7" class="one"/><text x="26" y="34" text-anchor="middle" class="label">1</text>
+    <rect x="62" y="0" width="52" height="52" rx="7" class="one"/><text x="88" y="34" text-anchor="middle" class="label">1</text>
+    <rect x="124" y="0" width="52" height="52" rx="7" class="one"/><text x="150" y="34" text-anchor="middle" class="label">1</text>
+    <rect x="186" y="0" width="52" height="52" rx="7" class="one"/><text x="212" y="34" text-anchor="middle" class="label">1</text>
+  </g>
+
+  <rect x="380" y="144" width="100" height="4" fill="#fbbf24"/>
+  <polygon points="495,146 476,134 476,158" class="gold"/>
+
+  <text x="670" y="103" text-anchor="middle" class="label" fill="#fb7185">2. PROGRAM NEEDED ZEROES</text>
+  <g transform="translate(550 120)">
+    <rect x="0" y="0" width="52" height="52" rx="7" class="one"/><text x="26" y="34" text-anchor="middle" class="label">1</text>
+    <rect x="62" y="0" width="52" height="52" rx="7" class="zero"/><text x="88" y="34" text-anchor="middle" class="label">0</text>
+    <rect x="124" y="0" width="52" height="52" rx="7" class="one"/><text x="150" y="34" text-anchor="middle" class="label">1</text>
+    <rect x="186" y="0" width="52" height="52" rx="7" class="zero"/><text x="212" y="34" text-anchor="middle" class="label">0</text>
+  </g>
+</svg>

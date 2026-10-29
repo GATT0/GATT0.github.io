@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-labelledby="title desc">
+  <title id="title">How programming and erasing move charge</title>
+  <desc id="desc">The internal write circuitry applies a voltage pulse that creates an electric field across the oxide. During programming electrons move from the silicon into the floating gate. During erasing the field is reversed and electrons leave the floating gate for the silicon.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:20px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:17px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:15px;fill:#cbd5e1}
+      .tiny{font-family:monospace;font-size:13px;fill:#cbd5e1}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2.5}
+      .card{fill:#172033;stroke:#64748b;stroke-width:2}
+      .circuit{fill:#064e3b;stroke:#34d399;stroke-width:2.5}
+      .gate{fill:#164e63;stroke:#22d3ee;stroke-width:2}
+      .floating{fill:#422006;stroke:#fbbf24;stroke-width:2}
+      .oxide{fill:#1e293b;stroke:#64748b;stroke-width:1.5}
+      .silicon{fill:#3f1834;stroke:#fb7185;stroke-width:1.5}
+      .cyan{fill:#22d3ee}.pink{fill:#fb7185}.green{fill:#34d399}.gold{fill:#fbbf24}
+    </style>
+  </defs>
+
+  <rect width="900" height="520" rx="18" fill="#0f172a"/>
+  <text x="450" y="43" text-anchor="middle" class="title">Moving the stored charge</text>
+  <rect x="25" y="66" width="850" height="426" rx="14" class="panel"/>
+
+  <rect x="270" y="76" width="360" height="74" rx="9" class="circuit"/>
+  <text x="450" y="105" text-anchor="middle" class="label">INTERNAL WRITE CIRCUIT</text>
+  <text x="450" y="134" text-anchor="middle" class="tiny">creates an electric field across the oxide</text>
+
+  <!-- Card backgrounds stay behind the pulse arrows. -->
+  <rect x="45" y="194" width="390" height="270" rx="11" class="card"/>
+  <rect x="465" y="194" width="390" height="270" rx="11" class="card"/>
+
+  <!-- The write circuit sends a different pulse to each operation. -->
+  <rect x="448" y="150" width="4" height="16" fill="#34d399"/>
+  <rect x="240" y="164" width="420" height="4" fill="#34d399"/>
+  <rect x="238" y="166" width="4" height="12" fill="#34d399"/>
+  <rect x="658" y="166" width="4" height="12" fill="#34d399"/>
+  <polygon points="240,194 228,178 252,178" class="green"/>
+  <polygon points="660,194 648,178 672,178" class="green"/>
+
+  <!-- Programming: electrons cross the oxide into the floating gate. -->
+  <text x="240" y="224" text-anchor="middle" class="label" fill="#fb7185">PROGRAM PULSE</text>
+
+  <rect x="145" y="242" width="190" height="31" rx="5" class="gate"/>
+  <text x="240" y="263" text-anchor="middle" class="small">CONTROL GATE</text>
+  <rect x="155" y="292" width="170" height="38" rx="5" class="floating"/>
+  <text x="240" y="316" text-anchor="middle" class="small">FLOATING GATE</text>
+  <rect x="145" y="356" width="190" height="17" rx="3" class="oxide"/>
+  <text x="348" y="370" class="tiny">oxide</text>
+  <rect x="145" y="405" width="190" height="22" rx="3" class="silicon"/>
+  <text x="240" y="421" text-anchor="middle" class="tiny">SILICON</text>
+
+  <g fill="#fb7185">
+    <circle cx="195" cy="393" r="4"/><circle cx="240" cy="393" r="4"/><circle cx="285" cy="393" r="4"/>
+    <polygon points="195,332 185,348 205,348"/><polygon points="240,332 230,348 250,348"/><polygon points="285,332 275,348 295,348"/>
+  </g>
+  <rect x="193" y="339" width="4" height="61" fill="#fb7185" opacity=".75"/>
+  <rect x="238" y="339" width="4" height="61" fill="#fb7185" opacity=".75"/>
+  <rect x="283" y="339" width="4" height="61" fill="#fb7185" opacity=".75"/>
+  <text x="240" y="452" text-anchor="middle" class="small" fill="#fb7185">silicon → floating gate</text>
+
+  <!-- Erasing: reverse field, electrons cross the oxide out of the gate. -->
+  <text x="660" y="224" text-anchor="middle" class="label" fill="#22d3ee">ERASE PULSE</text>
+
+  <rect x="565" y="242" width="190" height="31" rx="5" class="gate"/>
+  <text x="660" y="263" text-anchor="middle" class="small">CONTROL GATE</text>
+  <rect x="575" y="292" width="170" height="38" rx="5" class="floating"/>
+  <g fill="#fbbf24">
+    <circle cx="598" cy="304" r="4"/><circle cx="623" cy="318" r="4"/><circle cx="648" cy="304" r="4"/>
+    <circle cx="673" cy="318" r="4"/><circle cx="698" cy="304" r="4"/><circle cx="723" cy="318" r="4"/>
+  </g>
+  <rect x="565" y="356" width="190" height="17" rx="3" class="oxide"/>
+  <text x="768" y="370" class="tiny">oxide</text>
+  <rect x="565" y="405" width="190" height="22" rx="3" class="silicon"/>
+  <text x="660" y="421" text-anchor="middle" class="tiny">SILICON</text>
+
+  <g fill="#22d3ee">
+    <circle cx="615" cy="379" r="4"/><circle cx="660" cy="379" r="4"/><circle cx="705" cy="379" r="4"/>
+    <polygon points="615,403 605,387 625,387"/><polygon points="660,403 650,387 670,387"/><polygon points="705,403 695,387 715,387"/>
+  </g>
+  <rect x="613" y="330" width="4" height="66" fill="#22d3ee" opacity=".75"/>
+  <rect x="658" y="330" width="4" height="66" fill="#22d3ee" opacity=".75"/>
+  <rect x="703" y="330" width="4" height="66" fill="#22d3ee" opacity=".75"/>
+  <text x="660" y="452" text-anchor="middle" class="small" fill="#22d3ee">floating gate → silicon</text>
+</svg>

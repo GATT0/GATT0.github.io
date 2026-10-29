@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 630" role="img" aria-labelledby="title desc">
+  <title id="title">The adaptive tear-off algorithm</title>
+  <desc id="desc">Each attempt chooses a valid decrement, starts the write, cuts the RF field after a variable delay, and reads the counter back. An unchanged value makes the next attempt later, a lower value moves the search back, and a higher value is consolidated with two complete writes.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:20px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:17px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:15px;fill:#cbd5e1}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2.5}
+      .box{fill:#172033;stroke:#64748b;stroke-width:2.5}
+      .cyan{fill:#164e63;stroke:#22d3ee;stroke-width:2.5}
+      .green{fill:#064e3b;stroke:#34d399;stroke-width:2.5}
+      .gold{fill:#422006;stroke:#fbbf24;stroke-width:2.5}
+      .pink{fill:#4c1d3f;stroke:#fb7185;stroke-width:2.5}
+    </style>
+  </defs>
+
+  <rect width="900" height="630" rx="18" fill="#0f172a"/>
+  <text x="450" y="43" text-anchor="middle" class="title">The adaptive tear-off loop</text>
+  <rect x="25" y="66" width="850" height="538" rx="14" class="panel"/>
+
+  <!-- One attempt. -->
+  <text x="52" y="104" class="heading">ONE ATTEMPT</text>
+
+  <rect x="60" y="126" width="225" height="78" rx="11" class="box"/>
+  <text x="172" y="158" text-anchor="middle" class="small">1</text>
+  <text x="172" y="185" text-anchor="middle" class="label">CRAFT DECREMENT</text>
+
+  <rect x="338" y="126" width="225" height="78" rx="11" class="cyan"/>
+  <text x="450" y="158" text-anchor="middle" class="small">2</text>
+  <text x="450" y="185" text-anchor="middle" class="label">WRITE · WAIT t</text>
+
+  <rect x="615" y="126" width="225" height="78" rx="11" class="pink"/>
+  <text x="727" y="158" text-anchor="middle" class="small">3</text>
+  <text x="727" y="185" text-anchor="middle" class="label">RF OFF</text>
+
+  <rect x="285" y="163.5" width="44" height="3" fill="#64748b"/>
+  <polygon points="338,165 322,156 322,174" fill="#64748b"/>
+  <rect x="563" y="163.5" width="43" height="3" fill="#64748b"/>
+  <polygon points="615,165 599,156 599,174" fill="#64748b"/>
+
+  <rect x="662" y="241" width="130" height="66" rx="10" class="gold"/>
+  <text x="727" y="281" text-anchor="middle" class="label">READ BACK</text>
+  <rect x="725.5" y="204" width="3" height="28" fill="#64748b"/>
+  <polygon points="727,241 718,225 736,225" fill="#64748b"/>
+
+  <!-- The three outcomes drive the next attempt. -->
+  <rect x="60" y="378" width="225" height="111" rx="11" class="box"/>
+  <text x="172" y="420" text-anchor="middle" class="heading">SAME</text>
+  <text x="172" y="458" text-anchor="middle" class="label" fill="#22d3ee">increase t</text>
+
+  <rect x="338" y="378" width="225" height="111" rx="11" class="gold"/>
+  <text x="450" y="420" text-anchor="middle" class="heading">LOWER</text>
+  <text x="450" y="458" text-anchor="middle" class="label" fill="#fbbf24">reduce t</text>
+
+  <rect x="615" y="378" width="225" height="111" rx="11" class="green"/>
+  <text x="727" y="420" text-anchor="middle" class="heading">HIGHER</text>
+  <text x="727" y="458" text-anchor="middle" class="label" fill="#34d399">consolidate</text>
+
+  <rect x="171" y="318.5" width="3" height="50.5" fill="#64748b"/>
+  <rect x="171" y="318.5" width="557" height="3" fill="#64748b"/>
+  <rect x="448.5" y="318.5" width="3" height="50.5" fill="#64748b"/>
+  <rect x="725.5" y="307" width="3" height="62" fill="#64748b"/>
+  <polygon points="172,378 163,362 181,362" fill="#64748b"/>
+  <polygon points="450,378 441,362 459,362" fill="#64748b"/>
+  <polygon points="727,378 718,362 736,362" fill="#64748b"/>
+
+  <rect x="60" y="524" width="503" height="50" rx="9" class="cyan"/>
+  <text x="311" y="556" text-anchor="middle" class="label">NEXT ATTEMPT</text>
+  <rect x="172" y="489" width="3" height="26" fill="#64748b"/>
+  <polygon points="173,524 164,508 182,508" fill="#64748b"/>
+  <rect x="448.5" y="489" width="3" height="26" fill="#64748b"/>
+  <polygon points="450,524 441,508 459,508" fill="#64748b"/>
+
+  <rect x="615" y="524" width="225" height="50" rx="9" class="green"/>
+  <text x="727" y="556" text-anchor="middle" class="label">STABLE JUMP</text>
+  <rect x="725.5" y="489" width="3" height="26" fill="#64748b"/>
+  <polygon points="727,524 718,508 736,508" fill="#64748b"/>
+
+  <!-- A non-terminal result starts another attempt. -->
+  <rect x="38.5" y="165" width="3" height="384" fill="#22d3ee"/>
+  <rect x="40" y="547.5" width="20" height="3" fill="#22d3ee"/>
+  <rect x="40" y="163.5" width="6" height="3" fill="#22d3ee"/>
+  <polygon points="60,165 46,156 46,174" fill="#22d3ee"/>
+ </svg>

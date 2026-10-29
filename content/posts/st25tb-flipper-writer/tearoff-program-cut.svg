@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" role="img" aria-labelledby="title desc">
+  <title id="title">Cutting power during the program phase</title>
+  <desc id="desc">The graph follows the charge of one cell through erase and program. Removing the RF field shortly after programming begins leaves an intermediate charge close to the read boundary.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:20px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:17px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:15px;fill:#cbd5e1}
+      .tiny{font-family:monospace;font-size:13px;fill:#cbd5e1}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2.5}
+      .one{fill:#064e3b;stroke:#34d399;stroke-width:2}
+      .zero{fill:#4c1d3f;stroke:#fb7185;stroke-width:2}
+      .axis{stroke:#64748b;stroke-width:3;fill:none}
+      .cyan{fill:#22d3ee}.pink{fill:#fb7185}.green{fill:#34d399}.gold{fill:#fbbf24}
+    </style>
+  </defs>
+
+  <rect width="900" height="430" rx="18" fill="#0f172a"/>
+  <text x="450" y="43" text-anchor="middle" class="title">Cutting power during program</text>
+
+  <!-- Charge over the complete erase/program sequence. -->
+  <g transform="translate(0 -208)">
+  <rect x="25" y="274" width="850" height="350" rx="14" class="panel"/>
+
+  <rect x="118" y="350" width="3" height="215" fill="#64748b"/>
+  <rect x="120" y="563" width="710" height="3" fill="#64748b"/>
+  <polygon points="120,338 109,356 131,356" fill="#64748b"/>
+  <polygon points="842,565 824,554 824,576" fill="#64748b"/>
+  <text transform="translate(88 460) rotate(-90)" text-anchor="middle" class="small">trapped charge</text>
+  <text x="830" y="594" text-anchor="end" class="small">time</text>
+
+  <!-- Both voltage phases complete in a normal write; power disappears during program. -->
+  <rect x="155" y="337" width="265" height="30" rx="6" fill="#164e63" stroke="#22d3ee" stroke-width="2"/>
+  <text x="287" y="357" text-anchor="middle" class="small">ERASE</text>
+  <rect x="420" y="337" width="80" height="30" rx="6" fill="#4c1d3f" stroke="#fb7185" stroke-width="2"/>
+  <text x="460" y="357" text-anchor="middle" class="tiny">PROGRAM</text>
+  <rect x="500" y="337" width="300" height="30" rx="6" fill="#31203b" stroke="#fb7185" stroke-width="2"/>
+  <text x="650" y="357" text-anchor="middle" class="small">RF OFF · NO POWER</text>
+
+  <!-- Erase removes charge until the cell has fully reached logical 1. -->
+  <path d="M155 396 C240 398 330 470 420 518 L420 526 C330 478 240 406 155 404 Z" fill="#22d3ee"/>
+  <circle cx="155" cy="400" r="7" fill="#fb7185"/>
+  <circle cx="420" cy="522" r="8" fill="#34d399"/>
+
+  <!-- Program adds charge back only to a cell whose final value must be zero. -->
+  <path d="M420 518 C450 517 478 510 500 506 L500 514 C478 518 450 525 420 526 Z" fill="#fb7185"/>
+
+  <!-- This is where a normal program would have ended without the tear. -->
+  <path d="M500 506 C560 490 650 430 760 398 L760 406 C650 438 560 498 500 514 Z" fill="#64748b" opacity=".8"/>
+
+  <!-- Tear-off freezes the partially recharged cell near the threshold. -->
+  <rect x="498" y="326" width="4" height="226" fill="#fb7185"/>
+  <polygon points="500,320 488,339 512,339" class="pink"/>
+  <text x="480" y="399" text-anchor="end" class="label" fill="#fb7185">RF FIELD CUT</text>
+
+  <rect x="500" y="508" width="300" height="5" fill="#fbbf24"/>
+  <circle cx="500" cy="510" r="8" fill="#fbbf24"/>
+
+  <rect x="135" y="468" width="665" height="3" fill="#fbbf24" opacity=".55"/>
+  <text x="790" y="460" text-anchor="end" class="small" fill="#fbbf24">read boundary</text>
+  <text x="818" y="430" text-anchor="middle" class="label" fill="#fb7185">0</text>
+  <text x="818" y="525" text-anchor="middle" class="label" fill="#34d399">1</text>
+  </g>
+</svg>

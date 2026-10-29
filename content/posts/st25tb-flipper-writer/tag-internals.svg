@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" role="img" aria-labelledby="title desc">
+  <title id="title">Inside the tag</title>
+  <desc id="desc">A compact diagram of the tag. The antenna feeds the ASK demodulator and power supply. A symmetric power grid connects the supply to every active block. Digital control communicates with the EEPROM and drives the BPSK load modulator, whose output returns to the antenna.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:18px;font-weight:700;fill:#f8fafc}
+      .small{font-family:monospace;font-size:15px;fill:#cbd5e1}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2.5}
+      .antenna{fill:#422006;stroke:#fbbf24;stroke-width:3}
+      .power{fill:#064e3b;stroke:#34d399;stroke-width:3}
+      .receive{fill:#164e63;stroke:#22d3ee;stroke-width:3}
+      .reply{fill:#4c1d3f;stroke:#fb7185;stroke-width:3}
+      .logic{fill:#422006;stroke:#fbbf24;stroke-width:3}
+      .memory{fill:#3f1834;stroke:#fb7185;stroke-width:3}
+      .gold{fill:#fbbf24}.cyan{fill:#22d3ee}.pink{fill:#fb7185}.green{fill:#34d399}
+    </style>
+  </defs>
+
+  <rect width="900" height="440" rx="18" fill="#0f172a"/>
+  <text x="450" y="43" text-anchor="middle" class="title">Inside the tag</text>
+  <rect x="25" y="68" width="850" height="344" rx="14" class="panel"/>
+
+  <rect x="75" y="110" width="120" height="280" rx="10" class="antenna"/>
+  <text x="135" y="257" text-anchor="middle" class="label">ANTENNA</text>
+
+  <rect x="275" y="100" width="185" height="75" rx="9" class="receive"/>
+  <text x="367" y="130" text-anchor="middle" class="label">ASK</text>
+  <text x="367" y="155" text-anchor="middle" class="small">DEMODULATOR</text>
+
+  <rect x="275" y="207" width="185" height="75" rx="9" class="power"/>
+  <text x="367" y="251" text-anchor="middle" class="label">POWER SUPPLY</text>
+
+  <rect x="275" y="314" width="185" height="75" rx="9" class="reply"/>
+  <text x="367" y="344" text-anchor="middle" class="label">BPSK LOAD</text>
+  <text x="367" y="369" text-anchor="middle" class="small">MODULATOR</text>
+
+  <rect x="570" y="90" width="220" height="95" rx="9" class="logic"/>
+  <text x="680" y="144" text-anchor="middle" class="label">DIGITAL CONTROL</text>
+
+  <rect x="570" y="314" width="220" height="75" rx="9" class="memory"/>
+  <text x="680" y="358" text-anchor="middle" class="label">EEPROM</text>
+
+  <!-- Aligned antenna paths. -->
+  <rect x="195" y="135" width="65" height="4" fill="#22d3ee"/>
+  <polygon points="275,137 256,125 256,149" class="cyan"/>
+  <rect x="195" y="242" width="65" height="4" fill="#fbbf24"/>
+  <polygon points="275,244 256,232 256,256" class="gold"/>
+  <rect x="214" y="349" width="61" height="4" fill="#fb7185"/>
+  <polygon points="195,351 215,339 215,363" class="pink"/>
+
+  <!-- Power rail: the harvested supply powers every active block. -->
+  <rect x="460" y="118" width="110" height="4" fill="#34d399"/>
+  <rect x="513" y="118" width="4" height="209" fill="#34d399"/>
+  <rect x="460" y="242" width="57" height="4" fill="#34d399"/>
+  <rect x="460" y="323" width="110" height="4" fill="#34d399"/>
+
+  <rect x="460" y="148" width="95" height="4" fill="#22d3ee"/>
+  <polygon points="570,150 551,138 551,162" class="cyan"/>
+
+  <!-- Digital control to BPSK, then BPSK back to the antenna. -->
+  <rect x="535" y="168" width="35" height="4" fill="#fb7185"/>
+  <rect x="535" y="168" width="4" height="185" fill="#fb7185"/>
+  <rect x="460" y="349" width="79" height="4" fill="#fb7185"/>
+  <polygon points="460,351 479,339 479,363" class="pink"/>
+
+  <!-- Bidirectional memory bus. -->
+  <rect x="678.5" y="201" width="3" height="97" fill="#94a3b8"/>
+  <polygon points="680,185 670,201 690,201" fill="#94a3b8"/>
+  <polygon points="680,314 670,298 690,298" fill="#94a3b8"/>
+</svg>

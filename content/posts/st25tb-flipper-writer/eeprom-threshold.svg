@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" role="img" aria-labelledby="title desc">
+  <title id="title">How trapped charge changes the read threshold</title>
+  <desc id="desc">Three vertical levels connect the amount of trapped charge to the cell threshold voltage. The horizontal line is the fixed read voltage applied by the controller. An erased cell stays below it and reads as one, while a programmed cell stays above it and reads as zero.</desc>
+  <defs>
+    <style>
+      .title{font-family:monospace;font-size:30px;font-weight:700;fill:#f8fafc}
+      .heading{font-family:monospace;font-size:20px;font-weight:700;fill:#f8fafc}
+      .label{font-family:monospace;font-size:17px;font-weight:700;fill:#f8fafc}
+      .read{font-family:monospace;font-size:15px;font-weight:700;fill:#fbbf24}
+      .small{font-family:monospace;font-size:15px;fill:#cbd5e1}
+      .tiny{font-family:monospace;font-size:13px;fill:#cbd5e1}
+      .panel{fill:#111c2f;stroke:#334155;stroke-width:2.5}
+      .cell{fill:#172033;stroke:#64748b;stroke-width:2}
+      .axis{stroke:#64748b;stroke-width:3}
+      .green{fill:#34d399}.gold{fill:#fbbf24}.pink{fill:#fb7185}
+    </style>
+  </defs>
+
+  <rect width="900" height="470" rx="18" fill="#0f172a"/>
+  <text x="450" y="43" text-anchor="middle" class="title">From charge to threshold</text>
+  <rect x="25" y="66" width="850" height="378" rx="14" class="panel"/>
+  <text x="450" y="101" text-anchor="middle" class="heading">MORE TRAPPED ELECTRONS → HIGHER CELL Vt</text>
+
+  <line x1="120" y1="405" x2="120" y2="149" class="axis"/>
+  <polygon points="120,135 109,153 131,153" fill="#64748b"/>
+  <text transform="translate(88 277) rotate(-90)" text-anchor="middle" class="small">cell threshold voltage</text>
+
+  <rect x="140" y="270" width="685" height="4" fill="#fbbf24" opacity=".9"/>
+  <text x="845" y="259" text-anchor="end" class="read">READ VOLTAGE</text>
+
+  <!-- Erased: little charge, low threshold. -->
+  <text x="250" y="142" text-anchor="middle" class="label">ERASED</text>
+  <rect x="190" y="156" width="120" height="250" rx="9" class="cell"/>
+  <rect x="200" y="346" width="100" height="50" rx="4" fill="#064e3b" stroke="#34d399" stroke-width="2"/>
+  <circle cx="235" cy="372" r="4" class="gold"/><circle cx="265" cy="372" r="4" class="gold"/>
+  <text x="250" y="433" text-anchor="middle" class="label" fill="#34d399">reads 1</text>
+
+  <!-- Interrupted: partial charge, threshold close to reference. -->
+  <text x="450" y="142" text-anchor="middle" class="label">INTERRUPTED</text>
+  <rect x="390" y="156" width="120" height="250" rx="9" class="cell"/>
+  <rect x="400" y="278" width="100" height="118" rx="4" fill="#422006" stroke="#fbbf24" stroke-width="2"/>
+  <g fill="#fbbf24">
+    <circle cx="425" cy="373" r="4"/><circle cx="475" cy="373" r="4"/>
+    <circle cx="425" cy="340" r="4"/><circle cx="475" cy="340" r="4"/>
+    <circle cx="425" cy="307" r="4"/><circle cx="475" cy="307" r="4"/>
+  </g>
+  <text x="450" y="433" text-anchor="middle" class="label" fill="#fbbf24">unstable read</text>
+
+  <!-- Programmed: more charge, high threshold. -->
+  <text x="650" y="142" text-anchor="middle" class="label">PROGRAMMED</text>
+  <rect x="590" y="156" width="120" height="250" rx="9" class="cell"/>
+  <rect x="600" y="177" width="100" height="219" rx="4" fill="#4c1d3f" stroke="#fb7185" stroke-width="2"/>
+  <g fill="#fbbf24">
+    <circle cx="625" cy="373" r="4"/><circle cx="675" cy="373" r="4"/>
+    <circle cx="625" cy="336" r="4"/><circle cx="675" cy="336" r="4"/>
+    <circle cx="625" cy="299" r="4"/><circle cx="675" cy="299" r="4"/>
+    <circle cx="625" cy="262" r="4"/><circle cx="675" cy="262" r="4"/>
+    <circle cx="625" cy="225" r="4"/><circle cx="675" cy="225" r="4"/>
+    <circle cx="625" cy="194" r="4"/><circle cx="675" cy="194" r="4"/>
+  </g>
+  <text x="650" y="433" text-anchor="middle" class="label" fill="#fb7185">reads 0</text>
+</svg>
